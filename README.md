@@ -5,7 +5,7 @@
     from random import choice
     
     class Keethesh:
-        def __init__(self, user):
+        def __init__(self):
             self.current_work = 'A Fiverr order, most probably'
             self.currently_learning = 'Machine Learning'
             self.help_needed = None
