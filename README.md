@@ -15,7 +15,8 @@
 
 			if You.need_help():
 				print(self.get_Fiverr())
-
+	
+	@staticmethod
         def get_fun_fact():
             facts = ['I am a French native speaker',
                      'I am only 17',
@@ -30,7 +31,8 @@
                       Development later']
 
             return choice(facts)
-        
+
+        @staticmethod
         def get_Fiverr():
 	        return 'https://www.fiverr.com/keethesh'
 
