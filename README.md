@@ -1,12 +1,33 @@
+<!-- GitHub profile README -->
+<h1 align="center">Hey, I’m Keethesh 👋</h1>
+<p align="center">
+  🇲🇺 22-year-old polymathic builder · CISSP 🛡️ · Always curious, always iterating
+</p>
+
+---
+
+### 🚢  Now Shipping
+- **[LookbackAI](https://lookbackai.com)** - AI-powered video-journal SaaS that tracks growth from facial, vocal & linguistic cues 📈  
+- **Planify** - Motion-style planner where you put real cash 💸 on the line to finish tasks (skin-in-the-game productivity)  
+- **MergeFleet** - Unity mobile game prototype: merge, upgrade & command your own space armada 🎮🛸  
+
+### 🧰  Everyday Tools
+`Python` · `TypeScript` · `React / Next.js` · `Unity / C#`  
+Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for 🔍
+
+### 🪐  Interests & Skills
+| 💡 Logic & Tech | 🛠️ Hands-On | 🎵 / 🎨 Creative | 🏃‍♂️ Motion |
+|-----------------|-------------|-----------------|--------------|
+| Pentesting & OSINT | Lockpicking & electronics | Beatmaking | Calisthenics |
+| Reverse engineering | Mechanical Engineering | Photography & editing | Skateboarding |
+| AI / data pipelines | Rope & knotwork | Storycraft & UX | Muay Thai |
+
+<sub>My curiosity never skips leg day.</sub>
 
 
-<h1 align="center">Hey there 👋, I'm Keethesh!</h1>
-<h3 align="center">A Python developer from Mauritius</h3>
+### 📫  Elsewhere
+[LinkedIn](https://www.linkedin.com/in/keethesh)
 
-![me.py](code.png?raw=true)
-<h3 align="left">Support My Work!</h3>
-<p><a href="https://www.buymeacoffee.com/keethesh"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="keethesh" /></a></p>
+---
 
-
-
-
+<p align="center"><em>Start bold, polish later.</em></p>
