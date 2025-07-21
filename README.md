@@ -21,6 +21,7 @@ Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for
 | Pentesting & OSINT | Lockpicking & electronics | Beatmaking | Calisthenics |
 | Reverse engineering | Mechanical Engineering | Photography & editing | Skateboarding |
 | AI / data pipelines | Rope & knotwork | Storycraft & UX | Muay Thai |
+| AV/EDR Evasion & Bypass | Welding | 3D Modeling | Football Freestyle |
 
 <sub>My curiosity never skips leg day.</sub>
 
