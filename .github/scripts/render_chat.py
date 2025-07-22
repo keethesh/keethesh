@@ -323,53 +323,29 @@ class GroupChatRenderer:
             logger.warning(f"Error checking comment ownership: {e}")
             return False
   
-    def update_readme(self, chat_content):
-        """Update README.md with the rendered chat"""
-        readme_path = 'README.md'
-      
+    def update_readme(self, chat_content: str):
+        """Update an SVG file with the rendered chat content."""
+        svg_path = 'chat-display.svg'
+        logger.info("Using SVG path: " + svg_path)
+        # The SVG wrapper with the <foreignObject> tag
+        # We must define the dimensions of the SVG here
+        svg_template = f"""
+    <svg fill="none" width="650" height="500" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject width="100%" height="100%">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                {chat_content}
+            </div>
+        </foreignObject>
+    </svg>
+    """
+        
         try:
-            with open(readme_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-        except FileNotFoundError:
-            print("README.md not found")
-            return False
-      
-        # Define chat markers
-        start_marker = "<!-- CHAT_START -->"
-        end_marker = "<!-- CHAT_END -->"
-      
-        # Check if markers exist
-        if start_marker not in content:
-            # Add chat section to README
-            chat_section = f"""
-### 💬 Community Chat
-Join the conversation! Comment on [Issue #{self.issue_number}](https://github.com/{self.repo_owner}/{self.repo_name}/issues/{self.issue_number}) to see your message appear here.
-
-{start_marker}
-{chat_content}
-{end_marker}
-"""
-            # Insert before the "Latest Learnings" section
-            til_pattern = r'(### 🧠 Latest Learnings)'
-            if re.search(til_pattern, content):
-                content = re.sub(til_pattern, chat_section + r'\n\1', content)
-            else:
-                # Append at the end if TIL section not found
-                content += chat_section
-        else:
-            # Replace existing chat content (HTML doesn't need code blocks)
-            pattern = f'{re.escape(start_marker)}.*?{re.escape(end_marker)}'
-            replacement = f'{start_marker}\n{chat_content}\n{end_marker}'
-            content = re.sub(pattern, replacement, content, flags=re.DOTALL)
-      
-        # Write updated content
-        try:
-            with open(readme_path, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f"✅ README updated with {len(chat_content.split(chr(10)))} lines of chat")
+            with open(svg_path, 'w', encoding='utf-8') as f:
+                f.write(svg_template.strip())
+            print(f"✅ SVG file updated at {svg_path}")
             return True
         except Exception as e:
-            print(f"❌ Error writing README: {e}")
+            print(f"❌ Error writing SVG file: {e}")
             return False
 
 def main():

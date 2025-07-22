@@ -1,41 +1,7 @@
-<!-- GitHub profile README -->
-<h1 align="center">Hey, I’m Keethesh 👋</h1>
-<p align="center">
-  🇲🇺 22-year-old polymathic builder · CISSP 🛡️ · Always curious, always iterating
-</p>
-
----
-
-### 🚢  Now Shipping
-- **[LookbackAI](https://lookbackai.com)** - AI-powered video-journal SaaS that tracks growth from facial, vocal & linguistic cues 📈  
-- **Planify** - Motion-style planner where you put real cash 💸 on the line to finish tasks (skin-in-the-game productivity)  
-- **MergeFleet** - Unity mobile game prototype: merge, upgrade & command your own space armada 🎮🛸  
-
-### 🧰  Everyday Tools
-`Python` · `TypeScript` · `React / Next.js` · `Unity / C#`  
-Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for 🔍
-
-### 🪐  Interests & Skills
-| 💡 Logic & Tech | 🛠️ Hands-On | 🎵 / 🎨 Creative | 🏃‍♂️ Motion |
-|-----------------|-------------|-----------------|--------------|
-| Pentesting & OSINT | Lockpicking & electronics | Beatmaking | Calisthenics |
-| Reverse engineering | Mechanical Engineering | Photography & editing | Skateboarding |
-| AI / data pipelines | Rope & knotwork | Storycraft & UX | Muay Thai |
-| AV/EDR Evasion & Bypass | Welding | 3D Modeling | Football Freestyle |
-
-<sub>My curiosity never skips leg day.</sub>
-
-### 💬 Community Chat
-Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethesh/issues/2) to see your message appear here.
-
-![GitHub Chat](chat-display.svg)
-
-
-### 💬 Community Chat
-Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethesh/issues/2) to see your message appear here.
-
-<!-- CHAT_START -->
-
+<svg fill="none" width="650" height="500" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject width="100%" height="100%">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                
 <style>
 .chat-container {
     max-width: 600px;
@@ -439,7 +405,7 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta active">4 users active • 13:25:48</div>
+<div class="header-meta active">4 users active • 13:26:24</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
@@ -476,17 +442,6 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 Join the conversation in Issue #2</a>
 </div>
 </div>
-<!-- CHAT_END -->
-
-### 🧠 Latest Learnings
-
-<!-- TIL_START -->
-* [Getting started](til/001-getting-started.md)
-<!-- TIL_END -->
-
-### 📫  Elsewhere
-[LinkedIn](https://www.linkedin.com/in/keethesh)
-
----
-
-<p align="center"><em>Start bold, polish later.</em></p>
+            </div>
+        </foreignObject>
+    </svg>
