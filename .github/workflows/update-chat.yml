@@ -50,5 +50,6 @@ jobs:
       - name: Commit and push if changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "💬 Update chat display from issue comments"
-          file_pattern: README.md
+          commit_message: "💬 Update chat display SVG"
+          # Change this line to track the SVG file
+          file_pattern: chat-display.svg

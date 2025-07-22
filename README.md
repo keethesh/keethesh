@@ -28,6 +28,12 @@ Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for
 ### 💬 Community Chat
 Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethesh/issues/2) to see your message appear here.
 
+![GitHub Chat](chat-display.svg)
+
+
+### 💬 Community Chat
+Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethesh/issues/2) to see your message appear here.
+
 <!-- CHAT_START -->
 
 <style>
@@ -433,7 +439,7 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta active">4 users active • 13:11:16</div>
+<div class="header-meta active">4 users active • 13:18:49</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
