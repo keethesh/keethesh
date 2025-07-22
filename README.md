@@ -31,41 +31,43 @@ Join the conversation! Comment on [Issue #1](https://github.com/keethesh/keethes
 <!-- CHAT_START -->
 ```
 +------------------------------------------------+
-| # #builders-chat .................. (5 online) |
+| # #builders-chat .................. (2 online) |
 +------------------------------------------------+
-| alice_dev 10:23                                |
-| +------------------------------------+         |
-| | Hey! Love your LookbackAI project. |         |
-| | How's the AI model performing?     |         |
-| +------------------------------------+         |
+|                             09:25 keethesh (OP)|
+|                           +------------------+ |
+|                           | Apollo > Mona    | |
+|                           +------------------+ |
 |                                                |
-|                             11:47 keethesh (OP)|
-|          +-----------------------------------+ |
-|          | Thanks! The facial recognition is | |
-|          | hitting 94% accuracy now. Still   | |
-|          | tuning the vocal cues...          | |
-|          +-----------------------------------+ |
+|                             09:26 keethesh (OP)|
+|                +-----------------------------+ |
+|                | Pourquoi cette question? 😂 | |
+|                +-----------------------------+ |
 |                                                |
-| bob_sec 12:15                                  |
-| +-----------------------------------+          |
-| | Any plans for CISSP study groups? |          |
-| +-----------------------------------+          |
-|                                                |
-| charlie_ml 14:32                               |
+| TH3xACE 09:29                                  |
 | +------------------------------------+         |
-| | This is absolutely fascinating!    |         |
-| | I've been diving deep into your    |         |
-| | LookbackAI project and the         |         |
+| | Juste pour savoir à quoi tu        |         |
+| | faisais allusion quand tu disais   |         |
+| | “boiled noodles”…. enfaite j’ai vu |         |
 | | [... see full comment in Issue #1] |         |
 | +------------------------------------+         |
 |                                                |
-| david_devops 15:45                             |
-| +------------------------------------+         |
-| | Quick question about deployment!   |         |
-| | Looking at Docker + Kubernetes for |         |
-| | production. Any thoughts on        |         |
-| | scaling strategies?                |         |
-| +------------------------------------+         |
+|                             09:33 keethesh (OP)|
+|         +------------------------------------+ |
+|         | De meme! En passant, j'ai tres     | |
+|         | envie d'etudier dans le domaine de | |
+|         | la cybersecurite, et je vois que   | |
+|         | [... see full comment in Issue #1] | |
+|         +------------------------------------+ |
+|                                                |
+| TH3xACE 09:39                                  |
+| +------------------------+                     |
+| | Discord > TH3xACE#0453 |                     |
+| +------------------------+                     |
+|                                                |
+|                             09:40 keethesh (OP)|
+|                           +------------------+ |
+|                           | Ok :)            | |
+|                           +------------------+ |
 |                                                |
 +------------------------------------------------+
 | Join the conversation at Issue #1              |
