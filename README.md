@@ -32,8 +32,9 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 ```
 +------------------------------------------------------------------------------+
 |[_] [^] [X] Terminal - #readme-chat                                           |
-|Last activity: 11:23:29 | Shell: /bin/bash | Users: 0 | [Scroll: ^^^]         |
+|Last activity: 11:25:12 | Shell: /bin/bash | Users: 1 | [Scroll: ^^^]         |
 +------------------------------------------------------------------------------+
+[11:25] keethesh@github:~/readme-chat (main)$ # This is the first message       
 --- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #2 …
 keethesh@github:~/readme-chat (main)$ _                                         
 +------------------------------------------------------------------------------+
