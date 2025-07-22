@@ -32,26 +32,25 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 ```
 +------------------------------------------------------------------------------+
 |[_] [^] [X] Terminal - #readme-chat                                           |
-|Last activity: 12:21:25 | Shell: /bin/bash | Users: 5 | [Scroll: ^^^]         |
+|Live chat: 12:30:38 | 4 users | Collaboration mode | All welcome!             |
 +------------------------------------------------------------------------------+
-[12:21] alice_dev@github:~$ # Hey! Love your LookbackAI project. How's the AI   
->                             model performing?                                 
-                                                                                
-[12:21] keethesh@github:~/readme-chat (main)$ # Thanks! The facial recognition  
+keethesh@github:~/readme-chat (main)$ # 4 contributors collaborating            
+[12:30] keethesh@github:~/readme-chat (main)$ # Thanks! The facial recognition  
 >                                               is hitting 94% accuracy now.    
 >                                               Still tuning the vocal cues...  
                                                                                 
-[12:21] bob_sec@github:~$ # Any plans for CISSP study groups?                   
+[12:30] bob_sec@github:~$ # Any plans for CISSP study groups?                   
                                                                                 
-[12:21] charlie_ml@github:~$ # This is absolutely fascinating! I've been diving 
+[12:30] charlie_ml@github:~$ # This is absolutely fascinating! I've been diving 
 >                              deep into your LookbackAI project and the        
 >                              technical implementation is genuinely impressive.
 >                              [… see more at Issue #2] <typing…>               
                                                                                 
-[12:21] david_devops@github:~$ # Quick question about deployment! Looking at    
+[12:30] david_devops@github:~$ # Quick question about deployment! Looking at    
 >                                Docker + Kubernetes for production. Any        
 >                                thoughts on scaling strategies?                
---- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #2 …
+=== Live Terminal Session === Connected to Issue #2 === Share ideas, ask questi…
+keethesh@github:~/readme-chat (main)$ echo 'Your voice matters - join the conve…
 keethesh@github:~/readme-chat (main)$ _                                         
 +------------------------------------------------------------------------------+
 ```

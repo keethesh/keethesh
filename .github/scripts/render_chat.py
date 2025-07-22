@@ -123,12 +123,6 @@ class GroupChatRenderer:
         """Provide enhanced mock data for testing"""
         return [
             {
-                'user': {'login': 'alice_dev', 'type': 'User'},
-                'body': "Hey! Love your LookbackAI project. How's the AI model performing?",
-                'created_at': '2024-07-22T10:23:00Z',
-                'author_association': 'NONE'
-            },
-            {
                 'user': {'login': self.repo_owner, 'type': 'User'},
                 'body': "Thanks! The facial recognition is hitting 94% accuracy now. Still tuning the vocal cues...",
                 'created_at': '2024-07-22T11:47:00Z',

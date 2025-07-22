@@ -96,14 +96,35 @@ class _ChatCanvas:
         title_line = "|" + _clip(inner, self._inner_width()) + "|"
         lines.append(title_line)
 
-        # Second line – shell / user meta info
-        meta = (
-            f"Last activity: {datetime.datetime.now():%H:%M:%S} | "
-            "Shell: /bin/bash | "
-            f"Users: {participant_count} | [Scroll: ^^^]"
-        )
+        # Enhanced system information with project context
+        current_time = datetime.datetime.now()
+        if participant_count == 0:
+            meta = (
+                f"Session: {current_time:%H:%M:%S} | Ready for connections | "
+                "Projects: 3 active | Status: Building [ACTIVE]"
+            )
+        elif participant_count == 1:
+            meta = (
+                f"Active: {current_time:%H:%M:%S} | 1 contributor online | "
+                "Mode: Development | Stack: Python+TS+Unity"
+            )
+        else:
+            meta = (
+                f"Live chat: {current_time:%H:%M:%S} | {participant_count} users | "
+                "Collaboration mode | All welcome!"
+            )
         lines.append("|" + _clip(meta, self._inner_width()) + "|")
         lines.append(self._border())
+        
+        # Add contextual welcome prompt based on activity level  
+        if participant_count == 0:
+            welcome_line = "keethesh@github:~/readme-chat (main)$ # Welcome! Start a conversation..."
+        elif participant_count == 1:
+            welcome_line = "keethesh@github:~/readme-chat (main)$ # Building in public - join the discussion!"
+        else:
+            welcome_line = f"keethesh@github:~/readme-chat (main)$ # {participant_count} contributors collaborating"
+            
+        lines.append(_clip(welcome_line, self.width))
         return lines
 
     # .......................................................................
@@ -111,11 +132,16 @@ class _ChatCanvas:
         """Return terminal window footer with just the terminal interface."""
         footer: List[str] = []
 
+        # Dynamic status based on activity
         status = (
-            "--- Terminal Session Active --- Press Ctrl+C to exit --- "
-            f"Connected to Issue #{issue_number} ---"
+            f"=== Live Terminal Session === Connected to Issue #{issue_number} === "
+            "Share ideas, ask questions, collaborate ==="
         )
         footer.append(_clip(status, self.width))
+        
+        # Encouraging call-to-action
+        cta_line = "keethesh@github:~/readme-chat (main)$ echo 'Your voice matters - join the conversation!'"
+        footer.append(_clip(cta_line, self.width))
 
         prompt = "keethesh@github:~/readme-chat (main)$ _"
         footer.append(_clip(prompt, self.width))
@@ -204,23 +230,64 @@ def create_chat_interface(
     participant_count = len({c["user"]["login"] for c in comments}) if comments else 0
     pieces.extend(canvas.create_header(participant_count))
 
-    # MESSAGES with spacing between each comment
-    for i, c in enumerate(comments):
-        # Add blank line before each message (except the first)
-        if i > 0:
-            pieces.append(_clip("", chat_width))  # Empty line between messages
-            
-        pieces.extend(
-            _create_message_bubble(
-                content=c["body"],
-                username=c["user"]["login"],
-                _timestamp=c.get("created_at", ""),
-                is_owner=c.get("is_owner", False),
-                chat_width=chat_width,
-                max_lines=max_lines,
-                issue_number=issue_number,
+    # MESSAGES with intelligent spacing and context
+    if not comments:
+        # Enhanced empty state with project context
+        pieces.extend([
+            _clip("keethesh@github:~/readme-chat (main)$ # Welcome to the community chat!", chat_width),
+            _clip("> This terminal connects to live GitHub Issue discussions", chat_width),
+            _clip("> Share ideas, ask questions, collaborate on projects", chat_width),
+            _clip("", chat_width),
+            _clip("keethesh@github:~/readme-chat (main)$ git status", chat_width),
+            _clip("On branch main", chat_width),
+            _clip("Your branch is up to date with 'origin/main'.", chat_width),
+            _clip("", chat_width),
+            _clip("keethesh@github:~/readme-chat (main)$ ls -la projects/", chat_width),
+            _clip("drwxr-xr-x  LookbackAI/     # AI-powered video journal SaaS", chat_width),
+            _clip("drwxr-xr-x  Planify/        # Motion-style task planner", chat_width),
+            _clip("drwxr-xr-x  MergeFleet/     # Unity space armada game", chat_width),
+            _clip("", chat_width),
+            _clip("keethesh@github:~/readme-chat (main)$ echo 'Join the conversation!'", chat_width),
+            _clip("Join the conversation!", chat_width),
+        ])
+    else:
+        for i, c in enumerate(comments):
+            # Add contextual spacing and system info
+            if i == 0 and len(comments) == 1:
+                # Single message - add project context above
+                pieces.extend([
+                    _clip("keethesh@github:~/readme-chat (main)$ whoami", chat_width),
+                    _clip("keethesh - Polymathic builder, CISSP, AI enthusiast", chat_width),
+                    _clip("", chat_width),
+                    _clip("keethesh@github:~/readme-chat (main)$ cat recent_activity.log", chat_width),
+                    _clip("- Building LookbackAI: 94% facial recognition accuracy", chat_width),
+                    _clip("- Developing Planify: skin-in-the-game productivity", chat_width),
+                    _clip("- Prototyping MergeFleet: Unity mobile space strategy", chat_width),
+                    _clip("", chat_width),
+                ])
+            elif i > 0:
+                pieces.append(_clip("", chat_width))  # Standard spacing between messages
+                
+            pieces.extend(
+                _create_message_bubble(
+                    content=c["body"],
+                    username=c["user"]["login"],
+                    _timestamp=c.get("created_at", ""),
+                    is_owner=c.get("is_owner", False),
+                    chat_width=chat_width,
+                    max_lines=max_lines,
+                    issue_number=issue_number,
+                )
             )
-        )
+            
+        # Add engagement context after messages
+        if len(comments) <= 2:
+            pieces.extend([
+                _clip("", chat_width),
+                _clip("keethesh@github:~/readme-chat (main)$ ps aux | grep inspiration", chat_width),
+                _clip("Currently seeking: collaborators, feedback, interesting problems", chat_width),
+                _clip("Stack: Python, TypeScript, React, Unity, AI/ML, Security Research", chat_width),
+            ])
 
     # TERMINAL FOOTER
     pieces.extend(canvas.create_footer(issue_number))
