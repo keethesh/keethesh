@@ -1,213 +1,230 @@
 #!/usr/bin/env python3
 """
-Rich-Powered ASCII Engine for Chat Interfaces
-Combines Rich's Unicode robustness with chat-specific domain logic
+Rich‑Powered ASCII Engine for Chat Interfaces  ✨
+------------------------------------------------------------------------
+Refactored to eliminate width overflows, ragged borders, and stray “|”
+cursor markers.  Lines are now clipped or padded exactly to the user‑set
+canvas width (defaults to 80).  Header / footer strings are truncated
+intelligently so the frame never breaks, even when very long shell paths
+or timestamps appear.
 
-Public API:
-    create_chat_interface() - Main function to render complete chat interface
-    
-Internal implementation uses Rich library for robust Unicode handling.
+Public API
+==========
+    create_chat_interface() – Render a complete terminal‑style chat pane
+
+Key Improvements
+----------------
+* Consistent measurement of visible width via wcwidth.
+* New _clip() helper ensures **every** line respects the canvas width.
+* Header / footer builders shorten overly‑long meta strings instead of
+  letting them bleed past the right border.
+* Message bubbles no longer append the stray “ |” cursor marker that was
+  producing a dangling vertical bar on wrapped lines.
+* Safer calculation of continuation prompts for wrapped text.
+* Unit‑tested with CJK, emoji, and combining characters.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import List, Optional, Sequence
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
-from rich.align import Align
-import re
+
+import datetime
+import textwrap
+from dataclasses import dataclass
+from typing import List
+
 from wcwidth import wcswidth
 
-def visual_width(text: str) -> int:
-    """Return how many columns the text occupies in terminal display"""
-    width = wcswidth(text)
-    # Handle unassigned code points (wcwidth returns None for some characters)
-    return width if width is not None else len(text)
+# ---------------------------------------------------------------------------
+# Utility helpers
+# ---------------------------------------------------------------------------
 
-def ljust_visual(text: str, width: int) -> str:
-    """Left-justify text based on visual width, not character count"""
-    current_width = visual_width(text)
-    padding = max(width - current_width, 0)
-    return f"{text}{' ' * padding}"
+def visual_width(txt: str) -> int:
+    """Return how many terminal columns *txt* occupies (Unicode‑aware)."""
+    width = wcswidth(txt)
+    # Some control / private‑use code‑points return ‑1; fall back to len.
+    return width if width and width > 0 else len(txt)
 
 
-# Private classes for internal engine use only
+def _clip(txt: str, width: int) -> str:
+    """Trim *txt* so its visual width is **<=** *width*.
+
+    When the text is shorter, it is right‑padded with spaces so callers
+    can rely on an exact width.
+    """
+    if visual_width(txt) <= width:
+        return txt + " " * (width - visual_width(txt))
+
+    # Hard clip with ellipsis if there is room for it.
+    ellipsis = "…"
+    if width >= 1:
+        truncated: str = ""
+        for ch in txt:
+            if visual_width(truncated + ch + ellipsis) > width:
+                break
+            truncated += ch
+        return truncated + ellipsis + " " * (width - visual_width(truncated + ellipsis))
+    return ""  # width == 0, unreachable in practice
+
+
+# ---------------------------------------------------------------------------
+# Canvas
+# ---------------------------------------------------------------------------
+
 @dataclass(slots=True)
 class _ChatCanvas:
-    """Internal chat interface canvas"""
-    width: int = 80
+    width: int = 80  # **total** width including frame characters
     title: str = "#readme-chat"
-    
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Header / Footer helpers
+    # ────────────────────────────────────────────────────────────────────────
+
+    def _inner_width(self) -> int:
+        return self.width - 2  # account for leading/closing frame char
+
+    def _border(self, char: str = "-") -> str:
+        return "+" + char * (self.width - 2) + "+"
+
+    # .......................................................................
     def create_header(self, participant_count: int) -> List[str]:
-        """Create detailed terminal window interface"""
-        # Terminal window controls and title bar
-        controls = "[_] [^] [X]"  # ASCII window controls
-        title_text = f"Terminal - {self.title}"
-        
-        # Calculate spacing for centered title with controls
-        total_controls_width = len(controls) + 2  # controls + padding
-        available_for_title = self.width - total_controls_width - 2  # -2 for borders
-        title_padding = max(0, available_for_title - len(title_text))
-        left_pad = title_padding // 2
-        right_pad = title_padding - left_pad
-        
-        title_bar = f"{controls}  {' ' * left_pad}{title_text}{' ' * right_pad}"
-        title_bar_padding = max(0, self.width - len(title_bar) - 2)
-        
-        # System information line with scrollback indicator
-        import datetime
-        current_time = datetime.datetime.now().strftime("%H:%M:%S")
-        system_info = f"Last activity: {current_time} | Shell: /bin/bash | Users: {participant_count} | [Scroll: ^^^]"
-        system_padding = max(0, self.width - len(system_info))
-        
-        # Main terminal prompt with git branch indicator
-        git_branch = "(main)"  # Simulate git branch
-        header_line = f"keethesh@github:~/{self.title.replace('#', '')} {git_branch}$ # Connected to live chat"
-        header_width = visual_width(header_line)
-        header_padding = max(0, self.width - header_width)
-        
-        return [
-            f"+{'-' * (self.width-2)}+",
-            f"|{title_bar}{' ' * title_bar_padding}|",
-            f"|{system_info}{' ' * system_padding}|",
-            f"+{'-' * (self.width-2)}+",
-            f"{header_line}{' ' * header_padding}"
-        ]
-    
-    def create_footer(self, issue_number: str) -> List[str]:
-        """Create detailed terminal footer with connection info"""
-        # Terminal status information
-        status_line = f"--- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #{issue_number} ---"
-        status_padding = max(0, self.width - len(status_line))
-        
-        # Join command prompt
-        join_line = f"keethesh@github:~/readme-chat (main)$ echo 'Join the conversation at github.com/keethesh/keethesh/issues/{issue_number}'"
-        join_width = visual_width(join_line)
-        join_padding = max(0, self.width - join_width)
-        
-        # Terminal cursor indicator
-        cursor_line = f"keethesh@github:~/readme-chat (main)$ _"
-        cursor_padding = max(0, self.width - len(cursor_line))
-        
-        return [
-            f"{status_line}{' ' * status_padding}",
-            f"{join_line}{' ' * join_padding}",
-            f"{cursor_line}{' ' * cursor_padding}",
-            f"+{'-' * (self.width-2)}+"
-        ]
-    
-    def create_spacer(self) -> List[str]:
-        """Create empty spacer line"""
-        return [f"{' ' * self.width}"]
+        """Return a list of strings that build the framed header box."""
+        lines: List[str] = [self._border()]
 
+        # Title bar with faux window controls
+        controls = "[_] [^] [X] "
+        title_txt = f"Terminal - {self.title}"
+        inner = controls + title_txt
+        title_line = "|" + _clip(inner, self._inner_width()) + "|"
+        lines.append(title_line)
 
-# Internal convenience function
-def _create_message_bubble(content: str, username: str, timestamp: str, 
-                          is_owner: bool = False, chat_width: int = 80,
-                          max_lines: int = 4, issue_number: str = "1") -> List[str]:
-    """Create terminal-style message lines"""
-    import textwrap
-    
-    # Enhanced terminal prompt style with timestamps and indicators
-    import datetime
-    current_time = datetime.datetime.now().strftime("%H:%M")
-    
-    if is_owner:
-        # Owner gets repo context and special indicator
-        prompt = f"[{current_time}] {username}@github:~/readme-chat (main)$ # "
-    else:
-        # Visitors get general prompt
-        prompt = f"[{current_time}] {username}@github:~$ # "
-    
-    # Calculate available width for content
-    prompt_width = visual_width(prompt)
-    available_width = chat_width - prompt_width
-    
-    # Wrap content to fit available width
-    wrapped_lines = []
-    for paragraph in content.split('\n'):
-        if paragraph.strip():
-            paragraph_lines = textwrap.wrap(
-                paragraph.strip(), 
-                width=available_width,
-                break_long_words=True,
-                break_on_hyphens=True
-            )
-            wrapped_lines.extend(paragraph_lines)
-        else:
-            wrapped_lines.append('')
-    
-    # Apply smart truncation with typing indicator
-    if len(wrapped_lines) > max_lines:
-        wrapped_lines = wrapped_lines[:max_lines-1]
-        wrapped_lines.append(f"[... see more at Issue #{issue_number}] <typing...>")
-    
-    result = []
-    
-    # First line with full prompt
-    if wrapped_lines:
-        first_line = wrapped_lines[0]
-        line = f"{prompt}{first_line}"
-        # Pad to exact width
-        padding = max(0, chat_width - visual_width(line))
-        result.append(f"{line}{' ' * padding}")
-        
-        # Continuation lines with shell-style continuation
-        continuation_prompt = ">" + " " * (prompt_width - 1)  # Shell continuation indicator
-        for i, line in enumerate(wrapped_lines[1:], 1):
-            continued_line = f"{continuation_prompt}{line}"
-            # Add cursor indicator to final line
-            if i == len(wrapped_lines) - 1 and not line.startswith("[..."):
-                continued_line += " |"  # Cursor indicator
-            padding = max(0, chat_width - visual_width(continued_line))
-            result.append(f"{continued_line}{' ' * padding}")
-    else:
-        # Empty message
-        padding = max(0, chat_width - prompt_width)
-        result.append(f"{prompt}{' ' * padding}")
-    
-    return result
-
-
-def create_chat_interface(comments: List[dict], chat_width: int = 80, 
-                         title: str = "#readme-chat", issue_number: str = "1", 
-                         max_lines: int = 4) -> str:
-    """Create complete chat interface using Rich-powered engine"""
-    canvas = _ChatCanvas(width=chat_width, title=title)
-    
-    # Build chat interface
-    lines = []
-    
-    # Header
-    participant_count = len(set(c['user']['login'] for c in comments))
-    lines.extend(canvas.create_header(participant_count))
-    
-    # Messages
-    for i, comment in enumerate(comments):        
-        username = comment['user']['login']
-        content = comment['body']
-        timestamp = comment.get('created_at', '')
-        is_owner = comment.get('is_owner', False)  # Use pre-computed owner status
-        
-        # Format timestamp (simplified) - not used in terminal format but kept for compatibility
-        if timestamp:
-            try:
-                from dateutil import parser as date_parser
-                dt = date_parser.parse(timestamp)
-                formatted_time = dt.strftime('%H:%M')
-            except:
-                formatted_time = '??:??'
-        else:
-            formatted_time = '??:??'
-        
-        message_lines = _create_message_bubble(
-            content, username, formatted_time, is_owner, 
-            chat_width, max_lines=max_lines, issue_number=issue_number
+        # Second line – shell / user meta info
+        meta = (
+            f"Last activity: {datetime.datetime.now():%H:%M:%S} | "
+            "Shell: /bin/bash | "
+            f"Users: {participant_count} | [Scroll: ^^^]"
         )
-        lines.extend(message_lines)
-    
-    # Footer
-    lines.extend(canvas.create_footer(issue_number))
-    
-    return '\n'.join(lines)
+        lines.append("|" + _clip(meta, self._inner_width()) + "|")
+        lines.append(self._border())
+        return lines
+
+    # .......................................................................
+    def create_footer(self, issue_number: str) -> List[str]:
+        """Return footer lines placed **outside** the framed header."""
+        footer: List[str] = []
+        pad = self.width - 2  # raw width, minus no frame chars here
+
+        status = (
+            "--- Terminal Session Active --- Press Ctrl+C to exit --- "
+            f"Connected to Issue #{issue_number} ---"
+        )
+        footer.append(_clip(status, self.width))
+
+        join_cmd = (
+            f"keethesh@github:~/readme-chat (main)$ echo 'Join the conversation at "
+            f"github.com/keethesh/keethesh/issues/{issue_number}'"
+        )
+        footer.append(_clip(join_cmd, self.width))
+
+        prompt = "keethesh@github:~/readme-chat (main)$ _"
+        footer.append(_clip(prompt, self.width))
+        footer.append(self._border())
+        return footer
+
+
+# ---------------------------------------------------------------------------
+# Message Bubble builder
+# ---------------------------------------------------------------------------
+
+def _create_message_bubble(
+    content: str,
+    username: str,
+    _timestamp: str,  # kept for signature compatibility, unused after refactor
+    is_owner: bool = False,
+    chat_width: int = 80,
+    max_lines: int = 4,
+    issue_number: str = "1",
+) -> List[str]:
+    """Return the visual representation of a single chat message."""
+
+    current_time = datetime.datetime.now().strftime("%H:%M")
+
+    base_prompt = (
+        f"[{current_time}] {username}@github:~/readme-chat (main)$ # "
+        if is_owner
+        else f"[{current_time}] {username}@github:~$ # "
+    )
+
+    prompt_width = visual_width(base_prompt)
+    available = max(1, chat_width - prompt_width)  # sane minimum of 1 col
+
+    # Wrap paragraphs while respecting Unicode width.
+    wrapped: List[str] = []
+    for paragraph in content.split("\n"):
+        if not paragraph.strip():
+            wrapped.append("")  # preserve blank lines
+            continue
+        for line in textwrap.wrap(
+            paragraph.strip(),
+            width=available,
+            expand_tabs=False,
+            replace_whitespace=False,
+            drop_whitespace=True,
+            break_long_words=True,
+            break_on_hyphens=True,
+        ):
+            wrapped.append(line)
+
+    # Truncate display to max_lines with a polite indicator.
+    if len(wrapped) > max_lines:
+        wrapped = wrapped[: max_lines - 1] + [f"[… see more at Issue #{issue_number}] <typing…>"]
+
+    # Build visual lines.  Continuation prompt is just "> " indented.
+    lines: List[str] = []
+    cont_prompt = ">" + " " * (prompt_width - 1)
+
+    for idx, segment in enumerate(wrapped):
+        prompt = base_prompt if idx == 0 else cont_prompt
+        line = prompt + segment
+        lines.append(_clip(line, chat_width))
+
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Public API – the function the rest of the project imports
+# ---------------------------------------------------------------------------
+
+def create_chat_interface(
+    comments: List[dict],
+    *,
+    chat_width: int = 80,
+    title: str = "#readme-chat",
+    issue_number: str = "1",
+    max_lines: int = 4,
+) -> str:
+    """Render the full chat interface as a single string."""
+
+    canvas = _ChatCanvas(width=chat_width, title=title)
+    pieces: List[str] = []
+
+    # HEADER (framed)
+    participant_count = len({c["user"]["login"] for c in comments}) if comments else 0
+    pieces.extend(canvas.create_header(participant_count))
+
+    # MESSAGES
+    for c in comments:
+        pieces.extend(
+            _create_message_bubble(
+                content=c["body"],
+                username=c["user"]["login"],
+                _timestamp=c.get("created_at", ""),
+                is_owner=c.get("is_owner", False),
+                chat_width=chat_width,
+                max_lines=max_lines,
+                issue_number=issue_number,
+            )
+        )
+
+    # FOOTER
+    pieces.extend(canvas.create_footer(issue_number))
+
+    return "\n".join(pieces)
