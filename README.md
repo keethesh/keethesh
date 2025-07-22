@@ -32,25 +32,8 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 ```
 +------------------------------------------------------------------------------+
 |[_] [^] [X] Terminal - #readme-chat                                           |
-|Last activity: 12:21:25 | Shell: /bin/bash | Users: 5 | [Scroll: ^^^]         |
+|Last activity: 11:22:34 | Shell: /bin/bash | Users: 0 | [Scroll: ^^^]         |
 +------------------------------------------------------------------------------+
-[12:21] alice_dev@github:~$ # Hey! Love your LookbackAI project. How's the AI   
->                             model performing?                                 
-                                                                                
-[12:21] keethesh@github:~/readme-chat (main)$ # Thanks! The facial recognition  
->                                               is hitting 94% accuracy now.    
->                                               Still tuning the vocal cues...  
-                                                                                
-[12:21] bob_sec@github:~$ # Any plans for CISSP study groups?                   
-                                                                                
-[12:21] charlie_ml@github:~$ # This is absolutely fascinating! I've been diving 
->                              deep into your LookbackAI project and the        
->                              technical implementation is genuinely impressive.
->                              [… see more at Issue #2] <typing…>               
-                                                                                
-[12:21] david_devops@github:~$ # Quick question about deployment! Looking at    
->                                Docker + Kubernetes for production. Any        
->                                thoughts on scaling strategies?                
 --- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #2 …
 keethesh@github:~/readme-chat (main)$ _                                         
 +------------------------------------------------------------------------------+
