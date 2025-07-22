@@ -1,0 +1,34 @@
+name: Update TILs in README
+
+on:
+  # Run automatically when a new file is pushed to the 'til' directory
+  push:
+    paths:
+      - 'til/**.md'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update_readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Update README with latest TILs
+        env:
+          TIL_LIMIT: 2  # Example: show 7 recent TILs instead of 5
+          TIL_START_MARKER: '<!-- TIL_START -->'
+          TIL_END_MARKER: '<!-- TIL_END -->'
+        run: python .github/scripts/update_readme.py
+
+      - name: Commit and push if changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: Update latest TILs in README"
+          file_pattern: README.md
