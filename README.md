@@ -28,7 +28,7 @@ Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for
 ### 🧠 Latest Learnings
 
 <!-- TIL_START -->
-Nothing new to see here... yet!
+* [Getting started](til/001-getting-started.md)
 <!-- TIL_END -->
 
 ### 📫  Elsewhere
