@@ -17,6 +17,19 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align
 import re
+from wcwidth import wcswidth
+
+def visual_width(text: str) -> int:
+    """Return how many columns the text occupies in terminal display"""
+    width = wcswidth(text)
+    # Handle unassigned code points (wcwidth returns None for some characters)
+    return width if width is not None else len(text)
+
+def ljust_visual(text: str, width: int) -> str:
+    """Left-justify text based on visual width, not character count"""
+    current_width = visual_width(text)
+    padding = max(width - current_width, 0)
+    return f"{text}{' ' * padding}"
 
 
 # Private classes for internal engine use only
@@ -32,8 +45,10 @@ class _ChatCanvas:
         header_text = f"💬 {self.title}"
         status_text = f"🟢 {participant_count}"
         
-        # Calculate dynamic separator
-        available_space = self.width - len(header_text) - len(status_text) - 6
+        # Use visual width for accurate calculation
+        header_width = visual_width(header_text)
+        status_width = visual_width(status_text)
+        available_space = self.width - header_width - status_width - 6
         separator = '·' * max(available_space, 1)
         
         header_line = f"│ {header_text} {separator} {status_text} │"
@@ -47,10 +62,13 @@ class _ChatCanvas:
     def create_footer(self, issue_number: str) -> List[str]:
         """Create engagement footer"""
         footer_text = f"💭 Join the conversation at Issue #{issue_number}"
+        # Use visual width for accurate calculation
+        footer_width = visual_width(footer_text)
+        footer_spaces = max(0, (self.width - 4) - footer_width)
         
         return [
             f"├{'─' * (self.width-2)}┤",
-            f"│ {footer_text:<{self.width-4}} │",
+            f"│ {footer_text}{' ' * footer_spaces} │",
             f"╰{'─' * (self.width-2)}╯"
         ]
     
@@ -88,10 +106,10 @@ def _create_message_bubble(content: str, username: str, timestamp: str,
         wrapped_lines = wrapped_lines[:max_lines-1]
         wrapped_lines.append(f"[... see full comment in Issue #{issue_number}]")
     
-    # Calculate optimal bubble width based on actual content
+    # Calculate optimal bubble width based on visual width
     if wrapped_lines:
-        max_line_length = max(len(line) for line in wrapped_lines)
-        bubble_width = min(max_line_length + 4, 38)
+        max_visual_width = max(visual_width(line) for line in wrapped_lines)
+        bubble_width = min(max_visual_width + 4, 38)
         bubble_width = max(bubble_width, 20)
     else:
         bubble_width = 20
@@ -101,30 +119,65 @@ def _create_message_bubble(content: str, username: str, timestamp: str,
     if is_owner:
         # Right-aligned owner messages
         header = f"{timestamp} {username} 🔵"
-        padding = chat_width - len(header) - 2
+        # Use visual width for accurate calculation
+        header_width = visual_width(header)
+        padding = max(0, chat_width - header_width - 2)  # -2 for borders
         result.append(f"│{' ' * padding}{header}│")
         
         # Bubble with proper alignment
-        bubble_padding = chat_width - bubble_width - 2
+        bubble_padding = chat_width - bubble_width - 2  # Account for outer borders
         result.append(f"│{' ' * bubble_padding}╭{'─' * (bubble_width-2)}╮│")
         for line in wrapped_lines:
-            # Ensure each line fits exactly in the bubble
-            truncated_line = line[:bubble_width-4] if len(line) > bubble_width-4 else line
-            padded_line = f" {truncated_line:<{bubble_width-4}} "
-            result.append(f"│{' ' * bubble_padding}│{padded_line}│")
+            # Truncate by visual width if line is too long
+            if visual_width(line) > bubble_width - 4:
+                # Truncate character by character until it fits
+                truncated_line = line
+                for i in range(len(line), 0, -1):
+                    if visual_width(line[:i]) <= bubble_width - 4:
+                        truncated_line = line[:i]
+                        break
+            else:
+                truncated_line = line
+            
+            # Use visual padding for proper alignment
+            content_width = bubble_width - 4
+            padded_content = ljust_visual(truncated_line, content_width)
+            # Create complete bubble content line that's exactly bubble_width columns
+            bubble_content = f"│ {padded_content} │"
+            # Add to result: outer border + padding + bubble + outer border = chat_width
+            result.append(f"│{' ' * bubble_padding}{bubble_content}│")
         result.append(f"│{' ' * bubble_padding}╰{'─' * (bubble_width-2)}╯│")
     else:
         # Left-aligned guest messages
         header = f"⚪ {username} {timestamp}"
-        result.append(f"│ {header:<{chat_width-3}}│")
+        # Use visual width for accurate calculation
+        header_width = visual_width(header)
+        header_spaces = max(0, (chat_width - 3) - header_width)
+        result.append(f"│ {header}{' ' * header_spaces}│")
         
         # Bubble with proper alignment
         result.append(f"│ ╭{'─' * (bubble_width-2)}╮{' ' * (chat_width-bubble_width-3)}│")
         for line in wrapped_lines:
-            # Ensure each line fits exactly in the bubble
-            truncated_line = line[:bubble_width-4] if len(line) > bubble_width-4 else line
-            padded_line = f" {truncated_line:<{bubble_width-4}} "
-            result.append(f"│ │{padded_line}│{' ' * (chat_width-bubble_width-3)}│")
+            # Truncate by visual width if line is too long
+            if visual_width(line) > bubble_width - 4:
+                # Truncate character by character until it fits
+                truncated_line = line
+                for i in range(len(line), 0, -1):
+                    if visual_width(line[:i]) <= bubble_width - 4:
+                        truncated_line = line[:i]
+                        break
+            else:
+                truncated_line = line
+            
+            # Use visual padding for proper alignment
+            # Target: │ │ content_padded │{spaces}│  = chat_width total
+            # So: │ content_padded │ should be exactly bubble_width visual columns
+            content_width = bubble_width - 4
+            padded_content = ljust_visual(truncated_line, content_width)
+            # Now create: │ content_padded │ which should be exactly bubble_width
+            bubble_line = f"│ {padded_content} │"
+            spaces_after = chat_width - bubble_width - 3  # Account for "│ " prefix and final │
+            result.append(f"│ {bubble_line}{' ' * spaces_after}│")
         result.append(f"│ ╰{'─' * (bubble_width-2)}╯{' ' * (chat_width-bubble_width-3)}│")
     
     return result

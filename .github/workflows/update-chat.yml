@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests python-dateutil rich>=13.0.0
+          pip install requests python-dateutil rich>=13.0.0 wcwidth>=0.2.9
 
       - name: Cache GitHub API responses
         uses: actions/cache@v3
