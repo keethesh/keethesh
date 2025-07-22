@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Interactive Group Chat Renderer for GitHub Profile
-Transforms GitHub Issue comments into mobile group chat interface
-Powered by Rich-powered ASCII engine for robust Unicode handling
+Transforms GitHub Issue comments into modern HTML chat interface
+Powered by HTML engine with CSS styling and responsive design
 """
 
 import os
@@ -14,8 +14,8 @@ from datetime import datetime
 from dateutil import parser as date_parser
 from typing import List, Dict, Optional, Any
 
-# Import Rich-powered ASCII engine
-from ascii_engine import create_chat_interface
+# Import HTML-powered chat engine
+from html_engine import create_html_chat_interface, HtmlChatConfig
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -32,8 +32,15 @@ class ChatConfig:
         self.max_retries = int(os.environ.get('MAX_RETRIES', '3'))
         self.retry_delay = float(os.environ.get('RETRY_DELAY', '1.0'))
         
-        # Engine configuration (passed to ascii_engine)
-        self.max_lines_per_message = int(os.environ.get('MAX_LINES_PER_MESSAGE', '4'))
+        # Engine configuration (passed to html_engine)
+        self.max_lines_per_message = int(os.environ.get('MAX_LINES_PER_MESSAGE', '6'))
+        self.html_config = HtmlChatConfig(
+            max_width="600px",
+            theme="github",
+            show_timestamps=True,
+            max_lines_per_message=self.max_lines_per_message,
+            enable_avatars=False
+        )
 
 class GroupChatRenderer:
     def __init__(self):
@@ -161,18 +168,8 @@ class GroupChatRenderer:
     
     
     def render_chat_interface(self, comments: List[Dict[str, Any]]) -> str:
-        """Render chat interface using Rich-powered ASCII engine"""
-        if not comments:
-            # Let the engine handle empty state
-            return create_chat_interface(
-                [],
-                chat_width=self.config.chat_width,
-                title=self.config.chat_title,
-                issue_number=self.issue_number,
-                max_lines=self.config.max_lines_per_message
-            )
-        
-        # Process comments for Rich engine
+        """Render chat interface using HTML engine"""
+        # Process comments for HTML engine
         processed_comments = []
         recent_comments = self._get_recent_comments(comments)
         
@@ -190,13 +187,12 @@ class GroupChatRenderer:
                 logger.warning(f"Skipping malformed comment: {e}")
                 continue
         
-        # Use Rich-powered engine for rendering
-        return create_chat_interface(
+        # Use HTML-powered engine for rendering
+        return create_html_chat_interface(
             processed_comments,
-            chat_width=self.config.chat_width,
+            config=self.config.html_config,
             title=self.config.chat_title,
-            issue_number=self.issue_number,
-            max_lines=self.config.max_lines_per_message
+            issue_number=self.issue_number
         )
     
     def _get_recent_comments(self, comments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -250,9 +246,7 @@ class GroupChatRenderer:
 Join the conversation! Comment on [Issue #{self.issue_number}](https://github.com/{self.repo_owner}/{self.repo_name}/issues/{self.issue_number}) to see your message appear here.
 
 {start_marker}
-```
 {chat_content}
-```
 {end_marker}
 """
             # Insert before the "Latest Learnings" section
@@ -263,9 +257,9 @@ Join the conversation! Comment on [Issue #{self.issue_number}](https://github.co
                 # Append at the end if TIL section not found
                 content += chat_section
         else:
-            # Replace existing chat content
+            # Replace existing chat content (HTML doesn't need code blocks)
             pattern = f'{re.escape(start_marker)}.*?{re.escape(end_marker)}'
-            replacement = f'{start_marker}\n```\n{chat_content}\n```\n{end_marker}'
+            replacement = f'{start_marker}\n{chat_content}\n{end_marker}'
             content = re.sub(pattern, replacement, content, flags=re.DOTALL)
         
         # Write updated content
