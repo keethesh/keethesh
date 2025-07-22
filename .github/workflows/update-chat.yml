@@ -16,8 +16,8 @@ on:
 jobs:
   update_chat:
     runs-on: ubuntu-latest
-    # Run for any issue (you can specify which one to feature)
-    if: github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch'
+    # Only run for Issue #2 or manual dispatch
+    if: (github.event_name == 'issue_comment' && github.event.issue.number == 2) || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Check out repo
@@ -47,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
-          ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number || '1' }}
+          ISSUE_NUMBER: '2'
         run: python .github/scripts/render_chat.py
 
       - name: Commit and push if changes

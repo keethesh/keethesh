@@ -10,7 +10,7 @@ chat:
 
 # Behavior Configuration
 features:
-  enable_reactions: true      # Show GitHub reactions (future feature)
+  enable_reactions: false      # Show GitHub reactions (future feature)
   filter_bots: true          # Hide bot comments
   enable_timestamps: true    # Show message timestamps
   show_participant_count: true # Display active participant count

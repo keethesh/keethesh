@@ -41,7 +41,7 @@ class GroupChatRenderer:
         self.github_token = self._get_required_env('GITHUB_TOKEN')
         self.repo_owner = self._get_required_env('REPO_OWNER')
         self.repo_name = self._get_required_env('REPO_NAME')
-        self.issue_number = os.environ.get('ISSUE_NUMBER', '1')
+        self.issue_number = os.environ.get('ISSUE_NUMBER', '2')  # Change default to Issue #2
         
         # Load configuration
         self.config = ChatConfig()

@@ -108,9 +108,8 @@ class _ChatCanvas:
 
     # .......................................................................
     def create_footer(self, issue_number: str) -> List[str]:
-        """Return footer lines placed **outside** the framed header."""
+        """Return terminal window footer with just the terminal interface."""
         footer: List[str] = []
-        pad = self.width - 2  # raw width, minus no frame chars here
 
         status = (
             "--- Terminal Session Active --- Press Ctrl+C to exit --- "
@@ -118,16 +117,11 @@ class _ChatCanvas:
         )
         footer.append(_clip(status, self.width))
 
-        join_cmd = (
-            f"keethesh@github:~/readme-chat (main)$ echo 'Join the conversation at "
-            f"github.com/keethesh/keethesh/issues/{issue_number}'"
-        )
-        footer.append(_clip(join_cmd, self.width))
-
         prompt = "keethesh@github:~/readme-chat (main)$ _"
         footer.append(_clip(prompt, self.width))
         footer.append(self._border())
         return footer
+    
 
 
 # ---------------------------------------------------------------------------
@@ -210,8 +204,12 @@ def create_chat_interface(
     participant_count = len({c["user"]["login"] for c in comments}) if comments else 0
     pieces.extend(canvas.create_header(participant_count))
 
-    # MESSAGES
-    for c in comments:
+    # MESSAGES with spacing between each comment
+    for i, c in enumerate(comments):
+        # Add blank line before each message (except the first)
+        if i > 0:
+            pieces.append(_clip("", chat_width))  # Empty line between messages
+            
         pieces.extend(
             _create_message_bubble(
                 content=c["body"],
@@ -224,7 +222,7 @@ def create_chat_interface(
             )
         )
 
-    # FOOTER
+    # TERMINAL FOOTER
     pieces.extend(canvas.create_footer(issue_number))
 
     return "\n".join(pieces)
