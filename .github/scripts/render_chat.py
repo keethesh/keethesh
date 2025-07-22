@@ -12,7 +12,8 @@ import time
 import logging
 from datetime import datetime
 from dateutil import parser as date_parser
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Union
+from functools import lru_cache
 
 # Import HTML-powered chat engine
 from html_engine import create_html_chat_interface, HtmlChatConfig
@@ -22,25 +23,54 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 class ChatConfig:
-    """Configuration class for chat styling and behavior"""
+    """Configuration class for chat styling and behavior with validation."""
     def __init__(self):
-        self.chat_width = int(os.environ.get('CHAT_WIDTH', '80'))
-        self.max_messages = int(os.environ.get('MAX_MESSAGES', '10'))
-        self.chat_title = os.environ.get('CHAT_TITLE', '#readme-chat')
-        self.enable_reactions = os.environ.get('ENABLE_REACTIONS', 'true').lower() == 'true'
-        self.filter_bots = os.environ.get('FILTER_BOTS', 'true').lower() == 'true'
-        self.max_retries = int(os.environ.get('MAX_RETRIES', '3'))
-        self.retry_delay = float(os.environ.get('RETRY_DELAY', '1.0'))
+        # Load and validate environment variables
+        self.chat_width = self._get_positive_int('CHAT_WIDTH', 80)
+        self.max_messages = self._get_positive_int('MAX_MESSAGES', 10)
+        self.chat_title = os.environ.get('CHAT_TITLE', '#readme-chat').strip()
+        self.enable_reactions = self._get_bool('ENABLE_REACTIONS', True)
+        self.filter_bots = self._get_bool('FILTER_BOTS', True)
+        self.max_retries = self._get_positive_int('MAX_RETRIES', 3)
+        self.retry_delay = self._get_positive_float('RETRY_DELAY', 1.0)
         
-        # Engine configuration (passed to html_engine)
-        self.max_lines_per_message = int(os.environ.get('MAX_LINES_PER_MESSAGE', '6'))
+        # Engine configuration with validation
+        max_lines = self._get_positive_int('MAX_LINES_PER_MESSAGE', 6)
+        self.max_lines_per_message = max_lines
         self.html_config = HtmlChatConfig(
-            max_width="600px",
-            theme="github",
-            show_timestamps=True,
-            max_lines_per_message=self.max_lines_per_message,
-            enable_avatars=False
+            max_width=os.environ.get('CHAT_MAX_WIDTH', '600px'),
+            theme=os.environ.get('CHAT_THEME', 'github'),
+            show_timestamps=self._get_bool('SHOW_TIMESTAMPS', True),
+            max_lines_per_message=max_lines,
+            enable_avatars=self._get_bool('ENABLE_AVATARS', False)
         )
+    
+    def _get_positive_int(self, var_name: str, default: int) -> int:
+        """Get positive integer from environment with validation."""
+        try:
+            value = int(os.environ.get(var_name, str(default)))
+            return max(1, value)  # Ensure positive
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid {var_name}, using default: {default}")
+            return default
+    
+    def _get_positive_float(self, var_name: str, default: float) -> float:
+        """Get positive float from environment with validation."""
+        try:
+            value = float(os.environ.get(var_name, str(default)))
+            return max(0.1, value)  # Ensure positive
+        except (ValueError, TypeError):
+            logger.warning(f"Invalid {var_name}, using default: {default}")
+            return default
+    
+    def _get_bool(self, var_name: str, default: bool) -> bool:
+        """Get boolean from environment with validation."""
+        try:
+            value = os.environ.get(var_name, str(default)).lower()
+            return value in ('true', '1', 'yes', 'on', 'enabled')
+        except (ValueError, TypeError, AttributeError):
+            logger.warning(f"Invalid {var_name}, using default: {default}")
+            return default
 
 class GroupChatRenderer:
     def __init__(self):
@@ -64,14 +94,37 @@ class GroupChatRenderer:
         logger.info(f"Initialized chat renderer for {self.repo_owner}/{self.repo_name} issue #{self.issue_number}")
     
     def _get_required_env(self, var_name: str) -> str:
-        """Get required environment variable with validation"""
-        value = os.environ.get(var_name)
+        """Get required environment variable with enhanced validation.
+        
+        Args:
+            var_name: Environment variable name
+            
+        Returns:
+            Environment variable value
+            
+        Raises:
+            ValueError: If required variable is missing
+        """
+        value = os.environ.get(var_name, '').strip()
         if not value and var_name == 'GITHUB_TOKEN':
             logger.warning(f"Missing {var_name}, will use mock data for testing")
             return ''
         elif not value:
             raise ValueError(f"Required environment variable {var_name} is not set")
+        
+        # Additional validation for specific variables
+        if var_name in ['REPO_OWNER', 'REPO_NAME']:
+            if not self._is_valid_github_identifier(value):
+                raise ValueError(f"Invalid {var_name} format: {value}")
+                
         return value
+        
+    def _is_valid_github_identifier(self, identifier: str) -> bool:
+        """Validate GitHub username/repository name format."""
+        import re
+        # GitHub usernames and repo names: alphanumeric, hyphens, underscores
+        pattern = re.compile(r'^[a-zA-Z0-9._-]+$')
+        return bool(pattern.match(identifier) and 1 <= len(identifier) <= 39)
         
     def fetch_issue_comments(self) -> List[Dict[str, Any]]:
         """Fetch comments from the featured GitHub issue with retry logic"""
@@ -192,25 +245,60 @@ class GroupChatRenderer:
         # Show most recent comments but ensure conversation flow
         return comments[-self.config.max_messages:]
     
+    @lru_cache(maxsize=128)
     def _sanitize_message(self, message: str) -> str:
-        """Sanitize message content for display"""
-        if not message:
+        """Sanitize message content for display with caching.
+        
+        Args:
+            message: Raw message content
+            
+        Returns:
+            Sanitized message content
+        """
+        if not message or not message.strip():
             return "(empty message)"
         
-        # Basic sanitization
-        sanitized = message.strip()
-        
-        # Truncate very long messages
-        max_length = 500
-        if len(sanitized) > max_length:
-            sanitized = sanitized[:max_length-3] + "..."
-        
-        return sanitized
+        try:
+            # Normalize whitespace and strip
+            sanitized = ' '.join(message.strip().split())
+            
+            # Truncate very long messages with word boundary awareness
+            max_length = self.config.max_message_length if hasattr(self.config, 'max_message_length') else 500
+            if len(sanitized) > max_length:
+                # Find last word boundary before max_length
+                truncate_pos = sanitized.rfind(' ', 0, max_length - 3)
+                if truncate_pos > max_length // 2:  # Reasonable word boundary found
+                    sanitized = sanitized[:truncate_pos] + "..."
+                else:  # No good word boundary, hard truncate
+                    sanitized = sanitized[:max_length-3] + "..."
+            
+            return sanitized
+            
+        except Exception as e:
+            logger.warning(f"Message sanitization failed: {e}")
+            return "[Message formatting error]"
     
+    @lru_cache(maxsize=64)
+    def _is_owner_comment_cached(self, username: str, author_association: str) -> bool:
+        """Cached check for owner comment status."""
+        return (author_association == 'OWNER' or username == self.repo_owner)
+        
     def _is_owner_comment(self, comment: Dict[str, Any]) -> bool:
-        """Check if comment is from repository owner"""
-        return (comment.get('author_association') == 'OWNER' or 
-                comment['user']['login'] == self.repo_owner)
+        """Check if comment is from repository owner with enhanced validation.
+        
+        Args:
+            comment: Comment dictionary from GitHub API
+            
+        Returns:
+            True if comment is from repository owner
+        """
+        try:
+            username = comment.get('user', {}).get('login', '')
+            author_association = comment.get('author_association', 'NONE')
+            return self._is_owner_comment_cached(username, author_association)
+        except (KeyError, AttributeError, TypeError) as e:
+            logger.warning(f"Error checking comment ownership: {e}")
+            return False
     
     def update_readme(self, chat_content):
         """Update README.md with the rendered chat"""

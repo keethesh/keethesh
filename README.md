@@ -133,6 +133,8 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
     border-left: 3px solid #d1d9e0;
     line-height: 1.4;
     color: #24292f;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .message.owner .message-content {
@@ -226,9 +228,16 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
         border-top-color: #30363d;
         color: #8b949e;
     }
+    
+    .empty-state {
+        color: #8b949e;
+    }
+    
+    .join-link {
+        color: #58a6ff;
+    }
 }
 </style>
-
 <div class="chat-container">
 <div class="chat-header">
 <div class="window-controls">
@@ -237,7 +246,7 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta">4 users active • 12:43:11</div>
+<div class="header-meta">4 users active • 12:53:17</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
@@ -259,7 +268,7 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 <a href="https://github.com/charlie_ml" class="username" target="_blank">@charlie_ml</a>
 <span class="timestamp">14:32</span>
 </div>
-<div class="message-content">This is absolutely fascinating! I&#x27;ve been diving deep into your LookbackAI project and the technical implementation is genuinely impressive. The facial recognition accuracy you mentioned (94%) is remarkable for real-time processing. I&#x27;m particularly curious about how you&#x27;re handling edge cases with varying lighting conditions and different facial angles. The vocal cue analysis component sounds like an innovative approach to emotion detection. Have you considered implementing ensemble methods ...</div>
+<div class="message-content">This is absolutely fascinating! I&#x27;ve been diving deep into your LookbackAI project and the technical implementation is genuinely impressive. The facial recognition accuracy you mentioned (94%) is remarkable for real-time processing. I&#x27;m particularly curious about how you&#x27;re handling edge cases with varying lighting conditions and different facial angles. The vocal cue analysis component sounds like an innovative approach to emotion detection. Have you considered implementing ensemble methods...</div>
 </div>
 <div class="message">
 <div class="message-header">
