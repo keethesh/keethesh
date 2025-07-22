@@ -12,9 +12,9 @@ chat:
 features:
   filter_bots: true           # Hide bot comments
   enable_timestamps: true     # Show message timestamps
-  enable_avatars: false       # Show user profile avatars
-  enable_reactions: false     # Show comment reactions with emojis
-  human_friendly_time: false  # Use relative timestamps (e.g., '2 minutes ago')
+  enable_avatars: true       # Show user profile avatars
+  enable_reactions: true     # Show comment reactions with emojis
+  human_friendly_time: true  # Use relative timestamps (e.g., '2 minutes ago')
   clickable_usernames: true   # Link usernames to GitHub profiles
   avatar_size: "32px"         # Avatar size (when enabled)
 

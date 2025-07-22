@@ -278,6 +278,23 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     border-bottom: 1px solid #d1d9e0;
     padding: 12px 16px;
     border-radius: 8px 8px 0 0;
+    animation: slideIn 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}}
+
+.chat-header::before {{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+    pointer-events: none;
+    opacity: 0.3;
 }}
 
 .window-controls {{
@@ -292,6 +309,17 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     height: 12px;
     border-radius: 50%;
     display: inline-block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}}
+
+.window-control:hover {{
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}}
+
+.window-controls:hover .control-close {{
+    animation: pulse 1.5s infinite;
 }}
 
 .control-close {{ background: #ff5f57; }}
@@ -308,6 +336,11 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     font-size: 12px;
     color: #656d76;
     margin-top: 4px;
+    animation: typing 2s infinite;
+}}
+
+.header-meta.active {{
+    animation: typing 1.5s infinite;
 }}
 
 .chat-messages {{
@@ -365,15 +398,19 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    animation: fadeIn 0.4s ease-out;
 }}
 
 .reaction:hover {{
     background: #e1e8ed;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }}
 
 .reaction-emoji {{
     font-size: 14px;
+    animation: breathe 3s ease-in-out infinite;
 }}
 
 .reaction-count {{
@@ -449,21 +486,94 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     text-align: center;
     font-size: 14px;
     color: #656d76;
+    animation: slideIn 0.8s ease-out 0.3s both;
+    position: relative;
+}}
+
+.chat-footer::before {{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0969da, #8250df);
+    animation: expandLine 2s ease-out 1s forwards;
+    transform: translateX(-50%);
+}}
+
+@keyframes expandLine {{
+    to {{ width: 60%; }}
 }}
 
 .join-link {{
     color: #0969da;
     text-decoration: none;
     font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
 }}
 
 .join-link:hover {{
-    text-decoration: underline;
+    text-decoration: none;
+    transform: translateY(-1px);
+    color: #0550ae;
+}}
+
+.join-link::after {{
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0969da, #8250df);
+    transition: width 0.3s ease;
+}}
+
+.join-link:hover::after {{
+    width: 100%;
 }}
 
 @keyframes fadeIn {{
     from {{ opacity: 0; transform: translateY(10px); }}
     to {{ opacity: 1; transform: translateY(0); }}
+}}
+
+@keyframes pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.7; }}
+}}
+
+@keyframes breathe {{
+    0%, 100% {{ transform: scale(1); }}
+    50% {{ transform: scale(1.02); }}
+}}
+
+@keyframes shimmer {{
+    0% {{ background-position: -200% 0; }}
+    100% {{ background-position: 200% 0; }}
+}}
+
+@keyframes typing {{
+    0%, 60% {{ opacity: 1; }}
+    30% {{ opacity: 0.4; }}
+    100% {{ opacity: 1; }}
+}}
+
+@keyframes slideIn {{
+    from {{ transform: translateX(-10px); opacity: 0; }}
+    to {{ transform: translateX(0); opacity: 1; }}
+}}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {{
+    * {{
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }}
 }}
 
 /* Dark mode support */
@@ -476,6 +586,10 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     .chat-header {{
         background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
         border-bottom-color: #30363d;
+    }}
+    
+    .chat-header::before {{
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
     }}
   
     .header-title {{ color: #f0f6fc; }}
@@ -568,13 +682,16 @@ def create_html_chat_interface(
   
     html_parts.append('<div class="chat-container">')
   
-    # Header
+    # Header with dynamic status classes
+    meta_class = "header-meta"
     if participant_count == 0:
         status_text = f"Ready for connections • {current_time:%H:%M:%S}"
     elif participant_count == 1:
         status_text = f"1 contributor online • {current_time:%H:%M:%S}"
+        meta_class += " active"
     else:
         status_text = f"{participant_count} users active • {current_time:%H:%M:%S}"
+        meta_class += " active"
   
     html_parts.extend([
         '<div class="chat-header">',
@@ -584,7 +701,7 @@ def create_html_chat_interface(
         '<span class="window-control control-maximize"></span>',
         '</div>',
         f'<div class="header-title">{escape_html(title)}</div>',
-        f'<div class="header-meta">{escape_html(status_text)}</div>',
+        f'<div class="{meta_class}">{escape_html(status_text)}</div>',
         '</div>'
     ])
   
