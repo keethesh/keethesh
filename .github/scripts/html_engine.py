@@ -271,6 +271,9 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     background: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }}
 
 .chat-header {{
@@ -346,6 +349,20 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
 .chat-messages {{
     padding: 16px;
     min-height: 200px;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+}}
+
+.chat-messages::after {{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff 80%);
+    pointer-events: none; /* Allows clicking through the gradient */
 }}
 
 .message {{
@@ -592,7 +609,11 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
   
     .header-title {{ color: #f0f6fc; }}
     .header-meta {{ color: #8b949e; }}
-  
+    
+    .chat-messages::after {{
+        background: linear-gradient(to bottom, rgba(13, 17, 23, 0), #0d1117 80%);
+    }}
+    
     .message-content {{
         background: #161b22;
         border-left-color: #30363d;

@@ -1,7 +1,7 @@
-<svg fill="none" width="700" height="600" xmlns="http://www.w3.org/2000/svg">
-        <foreignObject width="100%" height="100%">
-            <div xmlns="http://www.w3.org/1999/xhtml">
-                
+<svg fill="none" width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                <foreignObject width="100%" height="100%">
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+                        
 <style>
 .chat-container {
     max-width: 600px;
@@ -11,6 +11,9 @@
     background: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .chat-header {
@@ -86,6 +89,20 @@
 .chat-messages {
     padding: 16px;
     min-height: 200px;
+    flex-grow: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.chat-messages::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff 80%);
+    pointer-events: none; /* Allows clicking through the gradient */
 }
 
 .message {
@@ -332,7 +349,11 @@
   
     .header-title { color: #f0f6fc; }
     .header-meta { color: #8b949e; }
-  
+    
+    .chat-messages::after {
+        background: linear-gradient(to bottom, rgba(13, 17, 23, 0), #0d1117 80%);
+    }
+    
     .message-content {
         background: #161b22;
         border-left-color: #30363d;
@@ -403,7 +424,7 @@
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta active">4 users active • 13:49:07</div>
+<div class="header-meta active">4 users active • 13:54:42</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
@@ -440,6 +461,6 @@
 Join the conversation in Issue #2</a>
 </div>
 </div>
-            </div>
-        </foreignObject>
-    </svg>
+                    </div>
+                </foreignObject>
+            </svg>

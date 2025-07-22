@@ -326,18 +326,18 @@ class GroupChatRenderer:
     def update_readme(self, chat_content: str):
         """Update an SVG file with the rendered chat content."""
         svg_path = 'chat-display.svg'
-        logger.info("Using SVG path: " + svg_path)
-        # The SVG wrapper with the <foreignObject> tag
-        # We must define the dimensions of the SVG here
+        width = 800
+        height = 600
+        
         svg_template = f"""
-    <svg fill="none" width="700" height="600" xmlns="http://www.w3.org/2000/svg">
-        <foreignObject width="100%" height="100%">
-            <div xmlns="http://www.w3.org/1999/xhtml">
-                {chat_content}
-            </div>
-        </foreignObject>
-    </svg>
-    """
+            <svg fill="none" width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
+                <foreignObject width="100%" height="100%">
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+                        {chat_content}
+                    </div>
+                </foreignObject>
+            </svg>
+            """
         
         try:
             with open(svg_path, 'w', encoding='utf-8') as f:
