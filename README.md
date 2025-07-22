@@ -101,6 +101,54 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
     gap: 8px;
 }
 
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #d1d9e0;
+    transition: border-color 0.2s ease;
+}
+
+.avatar:hover {
+    border-color: #0969da;
+}
+
+.avatar.owner {
+    border-color: #8250df;
+}
+
+.message-reactions {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.reaction {
+    background: #f6f8fa;
+    border: 1px solid #d1d9e0;
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.reaction:hover {
+    background: #e1e8ed;
+}
+
+.reaction-emoji {
+    font-size: 14px;
+}
+
+.reaction-count {
+    color: #656d76;
+    font-weight: 500;
+}
+
 .username {
     font-weight: 600;
     color: #0969da;
@@ -192,49 +240,74 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
         background: #0d1117;
         border-color: #30363d;
     }
-    
+  
     .chat-header {
         background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
         border-bottom-color: #30363d;
     }
-    
+  
     .header-title { color: #f0f6fc; }
     .header-meta { color: #8b949e; }
-    
+  
     .message-content {
         background: #161b22;
         border-left-color: #30363d;
         color: #f0f6fc;
     }
-    
+  
     .message.owner .message-content {
         background: #0c2d6b;
         border-left-color: #1f6feb;
     }
-    
+  
     .username { color: #58a6ff; }
     .username:hover { color: #79c0ff; }
     .username.owner { color: #a5a3ff; }
     .username.owner:hover { color: #b8b5ff; }
     .timestamp { color: #8b949e; }
-    
+  
     .project-showcase {
         background: #161b22;
         border-left-color: #f85149;
     }
-    
+  
     .chat-footer {
         background: #161b22;
         border-top-color: #30363d;
         color: #8b949e;
     }
-    
+  
     .empty-state {
         color: #8b949e;
     }
-    
+  
     .join-link {
         color: #58a6ff;
+    }
+    
+    .avatar {
+        border-color: #30363d;
+    }
+    
+    .avatar:hover {
+        border-color: #58a6ff;
+    }
+    
+    .avatar.owner {
+        border-color: #a5a3ff;
+    }
+    
+    .reaction {
+        background: #161b22;
+        border-color: #30363d;
+    }
+    
+    .reaction:hover {
+        background: #21262d;
+    }
+    
+    .reaction-count {
+        color: #8b949e;
     }
 }
 </style>
@@ -246,33 +319,37 @@ Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethes
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta">4 users active • 12:53:17</div>
+<div class="header-meta">4 users active • 13:01:55</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
 <div class="message-header">
-<a href="https://github.com/keethesh" class="username owner" target="_blank">@keethesh</a>
+<img src="https://github.com/keethesh.png?size=32" alt="keethesh avatar" class="avatar owner" loading="lazy">
+<a href="https://github.com/keethesh" class="username owner" target="_blank" rel="noopener">@keethesh</a>
 <span class="timestamp">11:47</span>
 </div>
 <div class="message-content">Thanks! The facial recognition is hitting 94% accuracy now. Still tuning the vocal cues...</div>
 </div>
 <div class="message">
 <div class="message-header">
-<a href="https://github.com/bob_sec" class="username" target="_blank">@bob_sec</a>
+<img src="https://github.com/bob_sec.png?size=32" alt="bob_sec avatar" class="avatar" loading="lazy">
+<a href="https://github.com/bob_sec" class="username" target="_blank" rel="noopener">@bob_sec</a>
 <span class="timestamp">12:15</span>
 </div>
 <div class="message-content">Any plans for CISSP study groups?</div>
 </div>
 <div class="message">
 <div class="message-header">
-<a href="https://github.com/charlie_ml" class="username" target="_blank">@charlie_ml</a>
+<img src="https://github.com/charlie_ml.png?size=32" alt="charlie_ml avatar" class="avatar" loading="lazy">
+<a href="https://github.com/charlie_ml" class="username" target="_blank" rel="noopener">@charlie_ml</a>
 <span class="timestamp">14:32</span>
 </div>
 <div class="message-content">This is absolutely fascinating! I&#x27;ve been diving deep into your LookbackAI project and the technical implementation is genuinely impressive. The facial recognition accuracy you mentioned (94%) is remarkable for real-time processing. I&#x27;m particularly curious about how you&#x27;re handling edge cases with varying lighting conditions and different facial angles. The vocal cue analysis component sounds like an innovative approach to emotion detection. Have you considered implementing ensemble methods...</div>
 </div>
 <div class="message">
 <div class="message-header">
-<a href="https://github.com/david_devops" class="username" target="_blank">@david_devops</a>
+<img src="https://github.com/david_devops.png?size=32" alt="david_devops avatar" class="avatar" loading="lazy">
+<a href="https://github.com/david_devops" class="username" target="_blank" rel="noopener">@david_devops</a>
 <span class="timestamp">15:45</span>
 </div>
 <div class="message-content">Quick question about deployment! Looking at Docker + Kubernetes for production. Any thoughts on scaling strategies?</div>

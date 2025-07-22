@@ -6,7 +6,7 @@ Production-ready HTML chat interface with comprehensive error handling,
 performance optimization, and accessibility features.
 
 Features:
-- 🎨 Modern GitHub-style theming with dark mode support  
+- 🎨 Modern GitHub-style theming with dark mode support
 - 🚀 Performance optimized with CSS generation and caching
 - 🛡️ Robust error handling and input validation
 - 📱 Responsive design for all screen sizes
@@ -48,7 +48,10 @@ class HtmlChatConfig:
     show_timestamps: bool = field(default=True)
     max_lines_per_message: int = field(default=6)
     enable_avatars: bool = field(default=False)
-    
+    enable_reactions: bool = field(default=False)
+    human_friendly_time: bool = field(default=False)
+    avatar_size: str = field(default="32px")
+  
     def __post_init__(self):
         """Validate configuration values"""
         if self.max_lines_per_message < 1:
@@ -69,23 +72,23 @@ def escape_html(text: Union[str, None]) -> str:
 
 def format_message_content(content: Optional[str], max_lines: int = 6, issue_number: str = "2") -> str:
     """Format message content with smart truncation and enhanced safety.
-    
+  
     Args:
         content: The message content to format
         max_lines: Maximum lines before truncation
         issue_number: GitHub issue number for truncation links
-        
+      
     Returns:
         HTML-formatted message content with proper escaping
     """
     if not content or not content.strip():
         return "<em>Empty message</em>"
-    
+  
     try:
         # Normalize content and split lines
         normalized_content = content.strip().replace('\r\n', '\n').replace('\r', '\n')
         lines = normalized_content.split('\n')
-        
+      
         if len(lines) > max_lines and max_lines > 0:
             truncated_lines = lines[:max_lines-1]
             truncated_content = '\n'.join(truncated_lines)
@@ -93,53 +96,154 @@ def format_message_content(content: Optional[str], max_lines: int = 6, issue_num
             return f"""{escape_html(truncated_content)}
 <br><em><a href="https://github.com/{escape_html(repo_path)}/issues/{escape_html(issue_number)}" target="_blank" rel="noopener">
 ... see full comment in Issue #{escape_html(issue_number)}</a></em>"""
-        
+      
         return escape_html(normalized_content).replace('\n', '<br>')
-        
+      
     except Exception as e:
         return f"<em>Error formatting message: {escape_html(str(e))}</em>"
 
 
 def get_repo_path() -> str:
     """Get repository path from environment with validation.
-    
+  
     Returns:
         Repository path in format 'owner/name'
-        
+      
     Raises:
         ValueError: If repository path components are invalid
     """
     owner = os.environ.get('REPO_OWNER', 'keethesh').strip()
     name = os.environ.get('REPO_NAME', 'keethesh').strip()
-    
+  
     # Validate components
     if not owner or not name:
         raise ValueError("Repository owner and name must not be empty")
-    
+  
     # Basic validation for GitHub username/repo name format
     import re
     github_pattern = re.compile(r'^[a-zA-Z0-9._-]+$')
     if not github_pattern.match(owner) or not github_pattern.match(name):
         raise ValueError(f"Invalid repository path format: {owner}/{name}")
-    
+  
     return f"{owner}/{name}"
 
 
-def _format_timestamp(timestamp_str: Optional[str]) -> str:
-    """Format GitHub timestamp to HH:MM with robust error handling.
+def get_avatar_url(username: str, size: int = 32) -> str:
+    """Generate GitHub avatar URL for a user.
     
     Args:
-        timestamp_str: ISO format timestamp string from GitHub API
+        username: GitHub username
+        size: Avatar size in pixels
         
+    Returns:
+        Avatar URL string
+    """
+    # GitHub avatar URLs follow a predictable pattern
+    return f"https://github.com/{escape_html(username)}.png?size={size}"
+
+
+def _format_reactions(reactions: Dict[str, Any]) -> str:
+    """Format GitHub comment reactions as HTML.
+    
+    Args:
+        reactions: GitHub API reactions object
+        
+    Returns:
+        HTML string for reactions display
+    """
+    if not reactions or not isinstance(reactions, dict):
+        return ""
+    
+    # Mapping of GitHub reaction types to emoji
+    reaction_emojis = {
+        '+1': '👍',
+        '-1': '👎', 
+        'laugh': '😄',
+        'confused': '😕',
+        'heart': '❤️',
+        'hooray': '🎉',
+        'rocket': '🚀',
+        'eyes': '👀'
+    }
+    
+    reaction_parts = []
+    
+    for reaction_type, count in reactions.items():
+        if reaction_type in reaction_emojis and count > 0:
+            emoji = reaction_emojis[reaction_type]
+            reaction_parts.append(
+                f'<span class="reaction">'
+                f'<span class="reaction-emoji">{emoji}</span>'
+                f'<span class="reaction-count">{count}</span>'
+                f'</span>'
+            )
+    
+    if reaction_parts:
+        return f'<div class="message-reactions">{"".join(reaction_parts)}</div>'
+    
+    return ""
+
+
+def _get_relative_time(dt: datetime.datetime) -> str:
+    """Get human-friendly relative time string.
+    
+    Args:
+        dt: Datetime object to format
+        
+    Returns:
+        Relative time string like '2 minutes ago', 'just now', etc.
+    """
+    now = datetime.datetime.now(dt.tzinfo) if dt.tzinfo else datetime.datetime.now()
+    diff = now - dt
+    
+    # Handle future dates (shouldn't happen but good to be safe)
+    if diff.total_seconds() < 0:
+        return "just now"
+    
+    seconds = int(diff.total_seconds())
+    
+    if seconds < 60:
+        return "just now"
+    elif seconds < 3600:  # Less than 1 hour
+        minutes = seconds // 60
+        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+    elif seconds < 86400:  # Less than 1 day
+        hours = seconds // 3600
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    elif seconds < 604800:  # Less than 1 week
+        days = seconds // 86400
+        return f"{days} day{'s' if days != 1 else ''} ago"
+    elif seconds < 2592000:  # Less than 1 month
+        weeks = seconds // 604800
+        return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+    elif seconds < 31536000:  # Less than 1 year
+        months = seconds // 2592000
+        return f"{months} month{'s' if months != 1 else ''} ago"
+    else:
+        years = seconds // 31536000
+        return f"{years} year{'s' if years != 1 else ''} ago"
+
+
+def _format_timestamp(timestamp_str: Optional[str], human_friendly: bool = False) -> str:
+    """Format GitHub timestamp with support for human-friendly format.
+  
+    Args:
+        timestamp_str: ISO format timestamp string from GitHub API
+        human_friendly: If True, return relative time (e.g., '2 minutes ago')
+      
     Returns:
         Formatted time string or empty string if parsing fails
     """
     if not timestamp_str:
         return ""
-        
+      
     try:
         dt = date_parser.parse(timestamp_str)
-        return dt.strftime("%H:%M")
+        
+        if human_friendly:
+            return _get_relative_time(dt)
+        else:
+            return dt.strftime("%H:%M")
     except (ValueError, TypeError, AttributeError) as e:
         # Log warning but don't fail the entire operation
         return ""
@@ -147,16 +251,16 @@ def _format_timestamp(timestamp_str: Optional[str]) -> str:
 
 def _generate_css_styles(config: HtmlChatConfig) -> str:
     """Generate CSS styles based on configuration.
-    
+  
     Args:
         config: HTML chat configuration
-        
+      
     Returns:
         Complete CSS stylesheet as string
     """
     # Base styles with configuration integration
     max_width = config.max_width
-    
+  
     return f"""
 <style>
 .chat-container {{
@@ -227,6 +331,54 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
     align-items: center;
     margin-bottom: 4px;
     gap: 8px;
+}}
+
+.avatar {{
+    width: {config.avatar_size};
+    height: {config.avatar_size};
+    border-radius: 50%;
+    border: 2px solid #d1d9e0;
+    transition: border-color 0.2s ease;
+}}
+
+.avatar:hover {{
+    border-color: #0969da;
+}}
+
+.avatar.owner {{
+    border-color: #8250df;
+}}
+
+.message-reactions {{
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}}
+
+.reaction {{
+    background: #f6f8fa;
+    border: 1px solid #d1d9e0;
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.2s ease;
+}}
+
+.reaction:hover {{
+    background: #e1e8ed;
+}}
+
+.reaction-emoji {{
+    font-size: 14px;
+}}
+
+.reaction-count {{
+    color: #656d76;
+    font-weight: 500;
 }}
 
 .username {{
@@ -320,49 +472,74 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
         background: #0d1117;
         border-color: #30363d;
     }}
-    
+  
     .chat-header {{
         background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
         border-bottom-color: #30363d;
     }}
-    
+  
     .header-title {{ color: #f0f6fc; }}
     .header-meta {{ color: #8b949e; }}
-    
+  
     .message-content {{
         background: #161b22;
         border-left-color: #30363d;
         color: #f0f6fc;
     }}
-    
+  
     .message.owner .message-content {{
         background: #0c2d6b;
         border-left-color: #1f6feb;
     }}
-    
+  
     .username {{ color: #58a6ff; }}
     .username:hover {{ color: #79c0ff; }}
     .username.owner {{ color: #a5a3ff; }}
     .username.owner:hover {{ color: #b8b5ff; }}
     .timestamp {{ color: #8b949e; }}
-    
+  
     .project-showcase {{
         background: #161b22;
         border-left-color: #f85149;
     }}
-    
+  
     .chat-footer {{
         background: #161b22;
         border-top-color: #30363d;
         color: #8b949e;
     }}
-    
+  
     .empty-state {{
         color: #8b949e;
     }}
-    
+  
     .join-link {{
         color: #58a6ff;
+    }}
+    
+    .avatar {{
+        border-color: #30363d;
+    }}
+    
+    .avatar:hover {{
+        border-color: #58a6ff;
+    }}
+    
+    .avatar.owner {{
+        border-color: #a5a3ff;
+    }}
+    
+    .reaction {{
+        background: #161b22;
+        border-color: #30363d;
+    }}
+    
+    .reaction:hover {{
+        background: #21262d;
+    }}
+    
+    .reaction-count {{
+        color: #8b949e;
     }}
 }}
 </style>"""
@@ -376,21 +553,21 @@ def create_html_chat_interface(
     issue_number: str = "2"
 ) -> str:
     """Create complete HTML chat interface"""
-    
+  
     if config is None:
         config = HtmlChatConfig()
-    
+  
     participant_count = len({c["user"]["login"] for c in comments}) if comments else 0
     current_time = datetime.datetime.now()
-    
+  
     # Generate CSS styles
     styles = _generate_css_styles(config)
-    
+  
     # Build HTML structure
     html_parts = [styles]
-    
+  
     html_parts.append('<div class="chat-container">')
-    
+  
     # Header
     if participant_count == 0:
         status_text = f"Ready for connections • {current_time:%H:%M:%S}"
@@ -398,7 +575,7 @@ def create_html_chat_interface(
         status_text = f"1 contributor online • {current_time:%H:%M:%S}"
     else:
         status_text = f"{participant_count} users active • {current_time:%H:%M:%S}"
-    
+  
     html_parts.extend([
         '<div class="chat-header">',
         '<div class="window-controls">',
@@ -410,10 +587,10 @@ def create_html_chat_interface(
         f'<div class="header-meta">{escape_html(status_text)}</div>',
         '</div>'
     ])
-    
+  
     # Messages area
     html_parts.append('<div class="chat-messages">')
-    
+  
     if not comments:
         # Empty state with project showcase
         html_parts.extend([
@@ -438,27 +615,55 @@ def create_html_chat_interface(
                 config.max_lines_per_message, 
                 issue_number
             )
-            
+          
             # Format timestamp with enhanced error handling
             timestamp = ""
             if config.show_timestamps and comment.get("created_at"):
-                timestamp = _format_timestamp(comment["created_at"])
+                timestamp = _format_timestamp(comment["created_at"], config.human_friendly_time)
             
+            # Generate avatar if enabled
+            avatar_html = ""
+            if config.enable_avatars:
+                avatar_size = int(config.avatar_size.replace('px', ''))
+                avatar_url = get_avatar_url(username, avatar_size)
+                avatar_class = f"avatar{' owner' if is_owner else ''}"
+                avatar_html = f'<img src="{avatar_url}" alt="{escape_html(username)} avatar" class="{avatar_class}" loading="lazy">'
+            
+            # Generate reactions if enabled and available
+            reactions_html = ""
+            if config.enable_reactions and comment.get("reactions"):
+                reactions_html = _format_reactions(comment["reactions"])
+          
             owner_class = " owner" if is_owner else ""
             message_class = " owner" if is_owner else ""
-            
-            html_parts.extend([
+          
+            # Build message HTML
+            message_parts = [
                 f'<div class="message{message_class}">',
-                '<div class="message-header">',
-                f'<a href="https://github.com/{escape_html(username)}" class="username{owner_class}" target="_blank">@{escape_html(username)}</a>',
+                '<div class="message-header">'
+            ]
+            
+            # Add avatar if enabled
+            if avatar_html:
+                message_parts.append(avatar_html)
+            
+            # Add username and timestamp
+            message_parts.extend([
+                f'<a href="https://github.com/{escape_html(username)}" class="username{owner_class}" target="_blank" rel="noopener">@{escape_html(username)}</a>',
                 f'<span class="timestamp">{timestamp}</span>' if timestamp else '',
                 '</div>',
-                f'<div class="message-content">{content}</div>',
-                '</div>'
+                f'<div class="message-content">{content}</div>'
             ])
-    
+            
+            # Add reactions if enabled
+            if reactions_html:
+                message_parts.append(reactions_html)
+            
+            message_parts.append('</div>')
+            html_parts.extend(message_parts)
+  
     html_parts.append('</div>')  # End messages
-    
+  
     # Footer
     repo_path = get_repo_path()
     html_parts.extend([
@@ -468,5 +673,5 @@ def create_html_chat_interface(
         '</div>',
         '</div>'  # End container
     ])
-    
+  
     return '\n'.join(html_parts)
