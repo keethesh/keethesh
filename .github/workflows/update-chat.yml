@@ -32,6 +32,14 @@ jobs:
         run: |
           pip install requests python-dateutil
 
+      - name: Cache GitHub API responses
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/github-api
+          key: github-api-${{ github.event.issue.number }}-${{ github.sha }}
+          restore-keys: |
+            github-api-${{ github.event.issue.number }}-
+
       - name: Update README with chat
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

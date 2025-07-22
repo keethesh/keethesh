@@ -1,0 +1,34 @@
+# Interactive Group Chat Configuration
+# Customize your GitHub profile chat interface
+
+# Visual Configuration
+chat:
+  width: 50                    # Total chat interface width
+  bubble_width: 38            # Individual message bubble width
+  max_messages: 10            # Maximum messages to display
+  title: "#builders-chat"     # Chat channel title
+
+# Behavior Configuration
+features:
+  enable_reactions: true      # Show GitHub reactions (future feature)
+  filter_bots: true          # Hide bot comments
+  enable_timestamps: true    # Show message timestamps
+  show_participant_count: true # Display active participant count
+
+# API Configuration  
+api:
+  max_retries: 3             # GitHub API retry attempts
+  retry_delay: 1.0           # Delay between retries (seconds)
+  timeout: 30                # Request timeout (seconds)
+
+# Content Filtering
+content:
+  max_message_length: 500    # Truncate very long messages
+  sanitize_content: true     # Basic content sanitization
+  preserve_formatting: true  # Keep markdown formatting
+
+# Styling Themes (future feature)
+theme:
+  style: "modern"            # modern, retro, minimal
+  colors: "auto"             # auto, light, dark
+  borders: "rounded"         # rounded, square, minimal
