@@ -36,157 +36,142 @@ def ljust_visual(text: str, width: int) -> str:
 @dataclass(slots=True)
 class _ChatCanvas:
     """Internal chat interface canvas"""
-    width: int = 50
-    title: str = "#builders-chat"
+    width: int = 80
+    title: str = "#readme-chat"
     
     def create_header(self, participant_count: int) -> List[str]:
-        """Create professional terminal-style header"""
-        # Manual header creation for precise control
-        header_text = f"# {self.title}"
-        status_text = f"({participant_count} online)"
+        """Create detailed terminal window interface"""
+        # Terminal window controls and title bar
+        controls = "[_] [^] [X]"  # ASCII window controls
+        title_text = f"Terminal - {self.title}"
         
-        # Use visual width for accurate calculation
-        header_width = visual_width(header_text)
-        status_width = visual_width(status_text)
-        available_space = self.width - header_width - status_width - 6
-        separator = '.' * max(available_space, 1)
+        # Calculate spacing for centered title with controls
+        total_controls_width = len(controls) + 2  # controls + padding
+        available_for_title = self.width - total_controls_width - 2  # -2 for borders
+        title_padding = max(0, available_for_title - len(title_text))
+        left_pad = title_padding // 2
+        right_pad = title_padding - left_pad
         
-        header_line = f"| {header_text} {separator} {status_text} |"
+        title_bar = f"{controls}  {' ' * left_pad}{title_text}{' ' * right_pad}"
+        title_bar_padding = max(0, self.width - len(title_bar) - 2)
+        
+        # System information line with scrollback indicator
+        import datetime
+        current_time = datetime.datetime.now().strftime("%H:%M:%S")
+        system_info = f"Last activity: {current_time} | Shell: /bin/bash | Users: {participant_count} | [Scroll: ^^^]"
+        system_padding = max(0, self.width - len(system_info))
+        
+        # Main terminal prompt with git branch indicator
+        git_branch = "(main)"  # Simulate git branch
+        header_line = f"keethesh@github:~/{self.title.replace('#', '')} {git_branch}$ # Connected to live chat"
+        header_width = visual_width(header_line)
+        header_padding = max(0, self.width - header_width)
         
         return [
             f"+{'-' * (self.width-2)}+",
-            header_line,
-            f"+{'-' * (self.width-2)}+"
+            f"|{title_bar}{' ' * title_bar_padding}|",
+            f"|{system_info}{' ' * system_padding}|",
+            f"+{'-' * (self.width-2)}+",
+            f"{header_line}{' ' * header_padding}"
         ]
     
     def create_footer(self, issue_number: str) -> List[str]:
-        """Create engagement footer"""
-        footer_text = f"Join the conversation at Issue #{issue_number}"
-        # Use visual width for accurate calculation
-        footer_width = visual_width(footer_text)
-        footer_spaces = max(0, (self.width - 4) - footer_width)
+        """Create detailed terminal footer with connection info"""
+        # Terminal status information
+        status_line = f"--- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #{issue_number} ---"
+        status_padding = max(0, self.width - len(status_line))
+        
+        # Join command prompt
+        join_line = f"keethesh@github:~/readme-chat (main)$ echo 'Join the conversation at github.com/keethesh/keethesh/issues/{issue_number}'"
+        join_width = visual_width(join_line)
+        join_padding = max(0, self.width - join_width)
+        
+        # Terminal cursor indicator
+        cursor_line = f"keethesh@github:~/readme-chat (main)$ _"
+        cursor_padding = max(0, self.width - len(cursor_line))
         
         return [
-            f"+{'-' * (self.width-2)}+",
-            f"| {footer_text}{' ' * footer_spaces} |",
+            f"{status_line}{' ' * status_padding}",
+            f"{join_line}{' ' * join_padding}",
+            f"{cursor_line}{' ' * cursor_padding}",
             f"+{'-' * (self.width-2)}+"
         ]
     
     def create_spacer(self) -> List[str]:
         """Create empty spacer line"""
-        return [f"|{' ' * (self.width-2)}|"]
+        return [f"{' ' * self.width}"]
 
 
 # Internal convenience function
 def _create_message_bubble(content: str, username: str, timestamp: str, 
-                          is_owner: bool = False, chat_width: int = 50,
+                          is_owner: bool = False, chat_width: int = 80,
                           max_lines: int = 4, issue_number: str = "1") -> List[str]:
-    """Create a chat bubble with professional text wrapping and truncation"""
+    """Create terminal-style message lines"""
     import textwrap
     
-    # Smart text wrapping with Unicode awareness
-    max_content_width = 34  # Conservative width for bubble content
+    # Enhanced terminal prompt style with timestamps and indicators
+    import datetime
+    current_time = datetime.datetime.now().strftime("%H:%M")
     
-    # Wrap content intelligently
+    if is_owner:
+        # Owner gets repo context and special indicator
+        prompt = f"[{current_time}] {username}@github:~/readme-chat (main)$ # "
+    else:
+        # Visitors get general prompt
+        prompt = f"[{current_time}] {username}@github:~$ # "
+    
+    # Calculate available width for content
+    prompt_width = visual_width(prompt)
+    available_width = chat_width - prompt_width
+    
+    # Wrap content to fit available width
     wrapped_lines = []
     for paragraph in content.split('\n'):
         if paragraph.strip():
             paragraph_lines = textwrap.wrap(
                 paragraph.strip(), 
-                width=max_content_width,
+                width=available_width,
                 break_long_words=True,
                 break_on_hyphens=True
             )
             wrapped_lines.extend(paragraph_lines)
         else:
-            wrapped_lines.append('')  # Preserve empty lines
+            wrapped_lines.append('')
     
-    # Apply smart truncation
+    # Apply smart truncation with typing indicator
     if len(wrapped_lines) > max_lines:
         wrapped_lines = wrapped_lines[:max_lines-1]
-        wrapped_lines.append(f"[... see full comment in Issue #{issue_number}]")
-    
-    # Calculate optimal bubble width based on visual width
-    if wrapped_lines:
-        max_visual_width = max(visual_width(line) for line in wrapped_lines)
-        bubble_width = min(max_visual_width + 4, 38)
-        bubble_width = max(bubble_width, 20)
-    else:
-        bubble_width = 20
+        wrapped_lines.append(f"[... see more at Issue #{issue_number}] <typing...>")
     
     result = []
     
-    if is_owner:
-        # Right-aligned owner messages
-        header = f"{timestamp} {username} (OP)"
-        # Use visual width for accurate calculation
-        header_width = visual_width(header)
-        padding = max(0, chat_width - header_width - 2)  # -2 for borders
-        result.append(f"|{' ' * padding}{header}|")
+    # First line with full prompt
+    if wrapped_lines:
+        first_line = wrapped_lines[0]
+        line = f"{prompt}{first_line}"
+        # Pad to exact width
+        padding = max(0, chat_width - visual_width(line))
+        result.append(f"{line}{' ' * padding}")
         
-        # Bubble with proper alignment
-        bubble_padding = chat_width - bubble_width - 3  # Account for outer borders + 1 space
-        result.append(f"|{' ' * bubble_padding}+{'-' * (bubble_width-2)}+ |")
-        for line in wrapped_lines:
-            # Truncate by visual width if line is too long
-            if visual_width(line) > bubble_width - 4:
-                # Truncate character by character until it fits
-                truncated_line = line
-                for i in range(len(line), 0, -1):
-                    if visual_width(line[:i]) <= bubble_width - 4:
-                        truncated_line = line[:i]
-                        break
-            else:
-                truncated_line = line
-            
-            # Use visual padding for proper alignment
-            content_width = bubble_width - 4
-            padded_content = ljust_visual(truncated_line, content_width)
-            # Create bubble content line (same pattern as guest messages)
-            bubble_content = f"| {padded_content} |"
-            # Build line: outer border + padding + bubble + space + final border
-            line_so_far = f"|{' ' * bubble_padding}{bubble_content}"
-            remaining_space = chat_width - visual_width(line_so_far) - 1  # -1 for final |
-            result.append(f"{line_so_far} |")
-        result.append(f"|{' ' * bubble_padding}+{'-' * (bubble_width-2)}+ |")
+        # Continuation lines with shell-style continuation
+        continuation_prompt = ">" + " " * (prompt_width - 1)  # Shell continuation indicator
+        for i, line in enumerate(wrapped_lines[1:], 1):
+            continued_line = f"{continuation_prompt}{line}"
+            # Add cursor indicator to final line
+            if i == len(wrapped_lines) - 1 and not line.startswith("[..."):
+                continued_line += " |"  # Cursor indicator
+            padding = max(0, chat_width - visual_width(continued_line))
+            result.append(f"{continued_line}{' ' * padding}")
     else:
-        # Left-aligned guest messages
-        header = f"{username} {timestamp}"
-        # Use visual width for accurate calculation
-        header_width = visual_width(header)
-        header_spaces = max(0, (chat_width - 3) - header_width)
-        result.append(f"| {header}{' ' * header_spaces}|")
-        
-        # Bubble with proper alignment
-        result.append(f"| +{'-' * (bubble_width-2)}+{' ' * (chat_width-bubble_width-3)}|")
-        for line in wrapped_lines:
-            # Truncate by visual width if line is too long
-            if visual_width(line) > bubble_width - 4:
-                # Truncate character by character until it fits
-                truncated_line = line
-                for i in range(len(line), 0, -1):
-                    if visual_width(line[:i]) <= bubble_width - 4:
-                        truncated_line = line[:i]
-                        break
-            else:
-                truncated_line = line
-            
-            # Use visual padding for proper alignment
-            content_width = bubble_width - 4
-            padded_content = ljust_visual(truncated_line, content_width)
-            # Create complete bubble content line that's exactly bubble_width columns
-            bubble_content = f"| {padded_content} |"
-            # Add to result: outer border + space + bubble + fill to chat_width
-            line_so_far = f"| {bubble_content}"
-            remaining_space = chat_width - visual_width(line_so_far) - 1  # -1 for final |
-            result.append(f"{line_so_far}{' ' * max(0, remaining_space)}|")
-        result.append(f"| +{'-' * (bubble_width-2)}+{' ' * (chat_width-bubble_width-3)}|")
+        # Empty message
+        padding = max(0, chat_width - prompt_width)
+        result.append(f"{prompt}{' ' * padding}")
     
     return result
 
 
-def create_chat_interface(comments: List[dict], chat_width: int = 50, 
-                         title: str = "#builders-chat", issue_number: str = "1", 
+def create_chat_interface(comments: List[dict], chat_width: int = 80, 
+                         title: str = "#readme-chat", issue_number: str = "1", 
                          max_lines: int = 4) -> str:
     """Create complete chat interface using Rich-powered engine"""
     canvas = _ChatCanvas(width=chat_width, title=title)
@@ -199,16 +184,13 @@ def create_chat_interface(comments: List[dict], chat_width: int = 50,
     lines.extend(canvas.create_header(participant_count))
     
     # Messages
-    for i, comment in enumerate(comments):
-        if i > 0:
-            lines.extend(canvas.create_spacer())
-        
+    for i, comment in enumerate(comments):        
         username = comment['user']['login']
         content = comment['body']
         timestamp = comment.get('created_at', '')
         is_owner = comment.get('is_owner', False)  # Use pre-computed owner status
         
-        # Format timestamp (simplified)
+        # Format timestamp (simplified) - not used in terminal format but kept for compatibility
         if timestamp:
             try:
                 from dateutil import parser as date_parser
@@ -219,14 +201,13 @@ def create_chat_interface(comments: List[dict], chat_width: int = 50,
         else:
             formatted_time = '??:??'
         
-        bubble_lines = _create_message_bubble(
+        message_lines = _create_message_bubble(
             content, username, formatted_time, is_owner, 
             chat_width, max_lines=max_lines, issue_number=issue_number
         )
-        lines.extend(bubble_lines)
+        lines.extend(message_lines)
     
     # Footer
-    lines.extend(canvas.create_spacer())
     lines.extend(canvas.create_footer(issue_number))
     
     return '\n'.join(lines)

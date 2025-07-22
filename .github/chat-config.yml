@@ -3,10 +3,10 @@
 
 # Visual Configuration
 chat:
-  width: 50                    # Total chat interface width
-  bubble_width: 38            # Individual message bubble width
+  width: 80                    # Total terminal interface width
+  bubble_width: 60            # Individual message content width
   max_messages: 10            # Maximum messages to display
-  title: "#keethesh-live"     # Chat channel title
+  title: "#readme-chat"       # Terminal session title
 
 # Behavior Configuration
 features:

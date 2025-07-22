@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 class ChatConfig:
     """Configuration class for chat styling and behavior"""
     def __init__(self):
-        self.chat_width = int(os.environ.get('CHAT_WIDTH', '50'))
+        self.chat_width = int(os.environ.get('CHAT_WIDTH', '80'))
         self.max_messages = int(os.environ.get('MAX_MESSAGES', '10'))
-        self.chat_title = os.environ.get('CHAT_TITLE', '#builders-chat')
+        self.chat_title = os.environ.get('CHAT_TITLE', '#readme-chat')
         self.enable_reactions = os.environ.get('ENABLE_REACTIONS', 'true').lower() == 'true'
         self.filter_bots = os.environ.get('FILTER_BOTS', 'true').lower() == 'true'
         self.max_retries = int(os.environ.get('MAX_RETRIES', '3'))
