@@ -25,6 +25,11 @@ Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for
 
 <sub>My curiosity never skips leg day.</sub>
 
+### 🧠 Latest Learnings
+
+<!-- TIL_START -->
+Nothing new to see here... yet!
+<!-- TIL_END -->
 
 ### 📫  Elsewhere
 [LinkedIn](https://www.linkedin.com/in/keethesh)
