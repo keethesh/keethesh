@@ -148,7 +148,7 @@ class GroupChatRenderer:
             },
             {
                 'user': {'login': 'david_devops', 'type': 'User'},
-                'body': "Quick question about deployment! 🚀 Looking at Docker + Kubernetes for production. Any thoughts on 中文测试 or Arabic text مرحبا?",
+                'body': "Quick question about deployment! Looking at Docker + Kubernetes for production. Any thoughts on scaling strategies?",
                 'created_at': '2024-07-22T15:45:00Z',
                 'author_association': 'NONE'
             }

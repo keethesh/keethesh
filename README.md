@@ -63,8 +63,8 @@ Join the conversation! Comment on [Issue #1](https://github.com/keethesh/keethes
 | +------------------------------------+         |
 | | Quick question about deployment!   |         |
 | | Looking at Docker + Kubernetes for |         |
-| | production. Any thoughts on 中文测 |         |
-| | or Arabic text مرحبا?              |         |
+| | production. Any thoughts on        |         |
+| | scaling strategies?                |         |
 | +------------------------------------+         |
 |                                                |
 +------------------------------------------------+
