@@ -13,11 +13,16 @@ on:
         required: false
         type: string
 
+  # Automatically update timestamps on a schedule
+  schedule:
+    # Runs at the top of every hour (e.g., 1:00, 2:00, 3:00)
+    - cron: '0 * * * *'
+
 jobs:
   update_chat:
     runs-on: ubuntu-latest
-    # Only run for Issue #2 or manual dispatch
-    if: (github.event_name == 'issue_comment' && github.event.issue.number == 2) || github.event_name == 'workflow_dispatch'
+    # Run for Issue #2, manual dispatch, or the schedule
+    if: (github.event_name == 'issue_comment' && github.event.issue.number == 2) || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     
     steps:
       - name: Check out repo
@@ -31,7 +36,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests python-dateutil
-
 
       - name: Update README with chat
         env:
