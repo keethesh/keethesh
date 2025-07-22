@@ -32,22 +32,21 @@ Join the conversation! Comment on [Issue #1](https://github.com/keethesh/keethes
 ```
 +------------------------------------------------------------------------------+
 |[_] [^] [X]                       Terminal - #readme-chat                     |
-|Last activity: 12:03:09 | Shell: /bin/bash | Users: 5 | [Scroll: ^^^]           |
+|Last activity: 11:05:49 | Shell: /bin/bash | Users: 2 | [Scroll: ^^^]           |
 +------------------------------------------------------------------------------+
 keethesh@github:~/readme-chat (main)$ # Connected to live chat                  
-[12:03] alice_dev@github:~$ # Hey! Love your LookbackAI project. How's the AI   
->                             model performing? |                               
-[12:03] keethesh@github:~/readme-chat (main)$ # Thanks! The facial recognition  
->                                               is hitting 94% accuracy now.    
->                                               Still tuning the vocal cues... |
-[12:03] bob_sec@github:~$ # Any plans for CISSP study groups?                   
-[12:03] charlie_ml@github:~$ # This is absolutely fascinating! I've been diving 
->                              deep into your LookbackAI project and the        
->                              technical implementation is genuinely impressive.
->                              [... see more at Issue #1] <typing...>           
-[12:03] david_devops@github:~$ # Quick question about deployment! Looking at    
->                                Docker + Kubernetes for production. Any        
->                                thoughts on scaling strategies? |              
+[11:05] keethesh@github:~/readme-chat (main)$ # Apollo > Mona                   
+[11:05] keethesh@github:~/readme-chat (main)$ # Pourquoi cette question? 😂     
+[11:05] TH3xACE@github:~$ # Juste pour savoir à quoi tu faisais allusion quand  
+>                           tu disais “boiled noodles”…. enfaite j’ai vu que tu 
+>                           avais mis un star sur mon projet SUDO_KILLER et ça  
+>                           m’a fait plaisir de voir un mauricien ;) |          
+[11:05] keethesh@github:~/readme-chat (main)$ # De meme! En passant, j'ai tres  
+>                                               envie d'etudier dans le domaine 
+>                                               de la cybersecurite, et je vois 
+>                                               [... see more at Issue #1] <typing...>
+[11:05] TH3xACE@github:~$ # Discord > TH3xACE#0453                              
+[11:05] keethesh@github:~/readme-chat (main)$ # Ok :)                           
 --- Terminal Session Active --- Press Ctrl+C to exit --- Connected to Issue #1 ---
 keethesh@github:~/readme-chat (main)$ echo 'Join the conversation at github.com/keethesh/keethesh/issues/1'
 keethesh@github:~/readme-chat (main)$ _                                         
