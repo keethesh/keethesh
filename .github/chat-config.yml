@@ -1,40 +1,29 @@
-# Interactive Group Chat Configuration
-# Customize your GitHub profile chat interface
+# GitHub Profile Chat Configuration
+# HTML-powered interactive chat interface
 
-# Visual Configuration
+# Chat Behavior
 chat:
-  width: 80                    # Total terminal interface width
-  bubble_width: 60            # Individual message content width
   max_messages: 10            # Maximum messages to display
-  title: "#readme-chat"       # Terminal session title
+  title: "#readme-chat"       # Chat session title
+  max_width: "600px"          # HTML container max width
+  theme: "github"             # Styling theme
 
-# Behavior Configuration
+# Features
 features:
-  enable_reactions: false      # Show GitHub reactions (future feature)
-  filter_bots: true          # Hide bot comments
-  enable_timestamps: true    # Show message timestamps
-  show_participant_count: true # Display active participant count
+  filter_bots: true           # Hide bot comments
+  enable_timestamps: true     # Show message timestamps
+  enable_avatars: false       # User avatars (future feature)
+  clickable_usernames: true   # Link usernames to GitHub profiles
 
 # API Configuration  
 api:
-  max_retries: 3             # GitHub API retry attempts
-  retry_delay: 1.0           # Delay between retries (seconds)
-  timeout: 30                # Request timeout (seconds)
+  max_retries: 3              # GitHub API retry attempts
+  retry_delay: 1.0            # Delay between retries (seconds)
+  timeout: 30                 # Request timeout (seconds)
 
-# Content Filtering & Smart Truncation  
+# Content Management
 content:
-  max_message_length: 500         # Truncate very long messages
-  sanitize_content: true          # Basic content sanitization
-  preserve_formatting: true       # Keep markdown formatting
-  
-# Smart Truncation (Professional Curation)
-truncation:
-  enable_smart_truncation: true   # Enable intelligent message trimming
-  max_lines_per_message: 4        # Maximum lines before truncation
-  truncation_suffix: "[... see full comment in Issue #{}]"  # Read-more link text
-
-# Styling Themes (future feature)
-theme:
-  style: "modern"            # modern, retro, minimal
-  colors: "auto"             # auto, light, dark
-  borders: "rounded"         # rounded, square, minimal
+  max_message_length: 500     # Truncate very long messages
+  max_lines_per_message: 6    # Lines before truncation
+  sanitize_content: true      # Basic content sanitization
+  smart_truncation: true      # Intelligent message trimming

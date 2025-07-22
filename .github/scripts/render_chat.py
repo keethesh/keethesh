@@ -155,17 +155,6 @@ class GroupChatRenderer:
             }
         ]
     
-    def format_timestamp(self, timestamp_str: str) -> str:
-        """Convert GitHub timestamp to chat-style time with better error handling"""
-        try:
-            dt = date_parser.parse(timestamp_str)
-            # Convert to local timezone for better UX
-            local_dt = dt.astimezone()
-            return local_dt.strftime('%H:%M')
-        except (ValueError, TypeError) as e:
-            logger.warning(f"Failed to parse timestamp '{timestamp_str}': {e}")
-            return '??:??'
-    
     
     def render_chat_interface(self, comments: List[Dict[str, Any]]) -> str:
         """Render chat interface using HTML engine"""
