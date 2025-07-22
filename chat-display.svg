@@ -430,30 +430,9 @@
 <div class="message owner">
 <div class="message-header">
 <a href="https://github.com/keethesh" class="username owner" target="_blank" rel="noopener">@keethesh</a>
-<span class="timestamp">11:47</span>
+<span class="timestamp">11:24</span>
 </div>
-<div class="message-content">Thanks! The facial recognition is hitting 94% accuracy now. Still tuning the vocal cues...</div>
-</div>
-<div class="message">
-<div class="message-header">
-<a href="https://github.com/bob_sec" class="username" target="_blank" rel="noopener">@bob_sec</a>
-<span class="timestamp">12:15</span>
-</div>
-<div class="message-content">Any plans for CISSP study groups?</div>
-</div>
-<div class="message">
-<div class="message-header">
-<a href="https://github.com/charlie_ml" class="username" target="_blank" rel="noopener">@charlie_ml</a>
-<span class="timestamp">14:32</span>
-</div>
-<div class="message-content">This is absolutely fascinating! I&#x27;ve been diving deep into your LookbackAI project and the technical implementation is genuinely impressive. The facial recognition accuracy you mentioned (94%) is remarkable for real-time processing. I&#x27;m particularly curious about how you&#x27;re handling edge cases with varying lighting conditions and different facial angles. The vocal cue analysis component sounds like an innovative approach to emotion detection. Have you considered implementing ensemble methods...</div>
-</div>
-<div class="message">
-<div class="message-header">
-<a href="https://github.com/david_devops" class="username" target="_blank" rel="noopener">@david_devops</a>
-<span class="timestamp">15:45</span>
-</div>
-<div class="message-content">Quick question about deployment! Looking at Docker + Kubernetes for production. Any thoughts on scaling strategies?</div>
+<div class="message-content">This is the first message</div>
 </div>
 </div>
 <div class="chat-footer">
