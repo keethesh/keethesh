@@ -4,7 +4,7 @@ on:
   # Trigger when comments are added to issues
   issue_comment:
     types: [created, edited]
-  
+
   # Manual trigger for testing
   workflow_dispatch:
     inputs:
@@ -22,8 +22,11 @@ jobs:
   update_chat:
     runs-on: ubuntu-latest
     # Run for Issue #2, manual dispatch, or the schedule
-    if: (github.event_name == 'issue_comment' && github.event.issue.number == 2) || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
-    
+    if: |
+      (github.event_name == 'issue_comment' && github.event.issue.number == 2) ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -37,6 +40,10 @@ jobs:
         run: |
           pip install requests python-dateutil
 
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
+
       - name: Update README with chat
         env:
           # GITHUB_TOKEN has repository write permissions to commit chat updates
@@ -47,9 +54,14 @@ jobs:
           ISSUE_NUMBER: '2'
         run: python .github/scripts/render_chat.py
 
+      - name: Update README with new timestamp
+        run: |
+          # Replace chat-display.svg?v=... with chat-display.svg?v=<new_timestamp>
+          sed -i "s/chat-display\.svg?v=[0-9]*/chat-display.svg?v=${{ env.TIMESTAMP }}/" README.md
+
       - name: Commit and push if changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "💬 Update chat display SVG"
-          # Change this line to track the SVG file
-          file_pattern: chat-display.svg
+          commit_message: "💬 Update chat display"
+          # Update the file_pattern to include both files
+          file_pattern: "README.md chat-display.svg"
