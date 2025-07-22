@@ -136,7 +136,7 @@ class GroupChatRenderer:
             },
             {
                 'user': {'login': 'bob_sec', 'type': 'User'},
-                'body': "Any plans for CISSP study groups? 🛡️",
+                'body': "Any plans for CISSP study groups?",
                 'created_at': '2024-07-22T12:15:00Z',
                 'author_association': 'NONE'
             },
