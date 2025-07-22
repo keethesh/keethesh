@@ -3,7 +3,7 @@
 
 # Chat Behavior
 chat:
-  max_messages: 10            # Maximum messages to display
+  max_messages: 5             # Maximum messages to display
   title: "#readme-chat"       # Chat session title
   max_width: "600px"          # HTML container max width
   theme: "github"             # Styling theme

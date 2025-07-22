@@ -346,8 +346,6 @@ def _generate_css_styles(config: HtmlChatConfig) -> str:
 .chat-messages {{
     padding: 16px;
     min-height: 200px;
-    max-height: 400px;
-    overflow-y: auto;
 }}
 
 .message {{

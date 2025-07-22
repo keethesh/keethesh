@@ -330,7 +330,7 @@ class GroupChatRenderer:
         # The SVG wrapper with the <foreignObject> tag
         # We must define the dimensions of the SVG here
         svg_template = f"""
-    <svg fill="none" width="650" height="500" xmlns="http://www.w3.org/2000/svg">
+    <svg fill="none" width="700" height="600" xmlns="http://www.w3.org/2000/svg">
         <foreignObject width="100%" height="100%">
             <div xmlns="http://www.w3.org/1999/xhtml">
                 {chat_content}
