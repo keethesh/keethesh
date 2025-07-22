@@ -30,46 +30,46 @@ Join the conversation! Comment on [Issue #1](https://github.com/keethesh/keethes
 
 <!-- CHAT_START -->
 ```
-╭────────────────────────────────────────────────╮
-│ # #builders-chat ·················· (5 online) │
-├────────────────────────────────────────────────┤
-│ alice_dev 10:23                                │
-│ ╭────────────────────────────────────╮         │
-│ │ Hey! Love your LookbackAI project. │         │
-│ │ How's the AI model performing?     │         │
-│ ╰────────────────────────────────────╯         │
-│                                                │
-│                             11:47 keethesh (OP)│
-│          ╭───────────────────────────────────╮ │
-│          │ Thanks! The facial recognition is │ │
-│          │ hitting 94% accuracy now. Still   │ │
-│          │ tuning the vocal cues...          │ │
-│          ╰───────────────────────────────────╯ │
-│                                                │
-│ bob_sec 12:15                                  │
-│ ╭───────────────────────────────────╮          │
-│ │ Any plans for CISSP study groups? │          │
-│ ╰───────────────────────────────────╯          │
-│                                                │
-│ charlie_ml 14:32                               │
-│ ╭────────────────────────────────────╮         │
-│ │ This is absolutely fascinating!    │         │
-│ │ I've been diving deep into your    │         │
-│ │ LookbackAI project and the         │         │
-│ │ [... see full comment in Issue #1] │         │
-│ ╰────────────────────────────────────╯         │
-│                                                │
-│ david_devops 15:45                             │
-│ ╭────────────────────────────────────╮         │
-│ │ Quick question about deployment!   │         │
-│ │ Looking at Docker + Kubernetes for │         │
-│ │ production. Any thoughts on 中文测 │         │
-│ │ or Arabic text مرحبا?              │         │
-│ ╰────────────────────────────────────╯         │
-│                                                │
-├────────────────────────────────────────────────┤
-│ Join the conversation at Issue #1              │
-╰────────────────────────────────────────────────╯
++------------------------------------------------+
+| # #builders-chat .................. (5 online) |
++------------------------------------------------+
+| alice_dev 10:23                                |
+| +------------------------------------+         |
+| | Hey! Love your LookbackAI project. |         |
+| | How's the AI model performing?     |         |
+| +------------------------------------+         |
+|                                                |
+|                             11:47 keethesh (OP)|
+|          +-----------------------------------+ |
+|          | Thanks! The facial recognition is | |
+|          | hitting 94% accuracy now. Still   | |
+|          | tuning the vocal cues...          | |
+|          +-----------------------------------+ |
+|                                                |
+| bob_sec 12:15                                  |
+| +-----------------------------------+          |
+| | Any plans for CISSP study groups? |          |
+| +-----------------------------------+          |
+|                                                |
+| charlie_ml 14:32                               |
+| +------------------------------------+         |
+| | This is absolutely fascinating!    |         |
+| | I've been diving deep into your    |         |
+| | LookbackAI project and the         |         |
+| | [... see full comment in Issue #1] |         |
+| +------------------------------------+         |
+|                                                |
+| david_devops 15:45                             |
+| +------------------------------------+         |
+| | Quick question about deployment!   |         |
+| | Looking at Docker + Kubernetes for |         |
+| | production. Any thoughts on 中文测 |         |
+| | or Arabic text مرحبا?              |         |
+| +------------------------------------+         |
+|                                                |
++------------------------------------------------+
+| Join the conversation at Issue #1              |
++------------------------------------------------+
 ```
 <!-- CHAT_END -->
 
