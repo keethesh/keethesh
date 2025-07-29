@@ -1,7 +1,7 @@
 <!-- GitHub profile README -->
 <h1 align="center">Hey, I’m Keethesh 👋</h1>
 <p align="center">
-  🇲🇺 22-year-old polymathic builder · CISSP 🛡️ · Always curious, always iterating
+  🇲🇺  Polymathic builder · MSc Cyber Security (King’s College London) · CISSP 🛡️ · Always curious, always iterating
 </p>
 
 ---
