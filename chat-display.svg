@@ -424,7 +424,7 @@
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta active">1 contributor online • 08:33:31</div>
+<div class="header-meta active">2 users active • 09:11:07</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
@@ -433,6 +433,13 @@
 <span class="timestamp">11:24</span>
 </div>
 <div class="message-content">This is the first message</div>
+</div>
+<div class="message">
+<div class="message-header">
+<a href="https://github.com/rel-exe" class="username" target="_blank" rel="noopener">@rel-exe</a>
+<span class="timestamp">09:10</span>
+</div>
+<div class="message-content">hello</div>
 </div>
 </div>
 <div class="chat-footer">
