@@ -424,7 +424,7 @@
 <span class="window-control control-maximize"></span>
 </div>
 <div class="header-title">#readme-chat</div>
-<div class="header-meta active">2 users active • 10:22:17</div>
+<div class="header-meta active">2 users active • 10:48:02</div>
 </div>
 <div class="chat-messages">
 <div class="message owner">
@@ -440,6 +440,13 @@
 <span class="timestamp">18:34</span>
 </div>
 <div class="message-content">hello, i want to learn, how to make this comments</div>
+</div>
+<div class="message owner">
+<div class="message-header">
+<a href="https://github.com/keethesh" class="username owner" target="_blank" rel="noopener">@keethesh</a>
+<span class="timestamp">10:47</span>
+</div>
+<div class="message-content">&gt; hello, i want to learn, how to make this comments Hello Emanuel, have a look at https://github.com/keethesh/keethesh/tree/main/.github/workflows. I also explained a bit more in the issue description (see 🤫 Under the Hood). Feel free to ask more questions if you need!</div>
 </div>
 </div>
 <div class="chat-footer">
