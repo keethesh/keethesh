@@ -28,7 +28,7 @@ Detours into `Ghidra`, `radare2`, `Binary Ninja`. Whatever the mission calls for
 ### 💬 Community Chat
 Join the conversation! Comment on [Issue #2](https://github.com/keethesh/keethesh/issues/2) to see your message appear here.
 
-![GitHub Chat](chat-display.svg?v=1758572578)
+![GitHub Chat](chat-display.svg?v=1758575876)
 
 ### 🧠 Latest Learnings
 
